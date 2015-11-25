@@ -12,7 +12,7 @@ class MainWindow(QWidget):
         self.setWindowTitle("PyMaterial RadioButtons")
         self.setGeometry(100, 100, 300, 200)
         p = self.palette()
-        p.setColor(self.backgroundRole(), MColors.BACKGROUND_LIGHT)
+        p.setColor(self.backgroundRole(), MColors.BACKGROUND_DARK)
         self.setPalette(p)
 
     def addComponents(self):

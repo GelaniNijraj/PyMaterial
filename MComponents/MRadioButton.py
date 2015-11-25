@@ -11,14 +11,16 @@ class OuterRing(MShape):
         MShape.__init__(self)
         self.setWidth(17)
         self.setHeight(17)
+        self.__color = QColor("#F00")
 
     def paintEvent(self, event):
         painter = QPainter()
         painter.begin(self)
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setOpacity(self.getOpacity())
-        painter.setPen(QPen(QColor("#F00"), 2))
-        painter.drawEllipse(QRect(self.getX(), self.getX(), self.getWidth(), self.getHeight()))
+        painter.setPen(QPen(self.__color, 2))
+        painter.drawEllipse(self.getX(), self.getX(), self.getWidth(), self.getHeight())
+        painter.end()
 
 
 class InnerCircle(MShape):
@@ -26,15 +28,17 @@ class InnerCircle(MShape):
         MShape.__init__(self)
         self.setWidth(9)
         self.setHeight(9)
+        self.__pen = QPen(QColor(255, 255, 255, 0), 0)
+        self.__color = QColor("#F00")
 
     def paintEvent(self, event):
         painter = QPainter()
         painter.begin(self)
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setOpacity(self.getOpacity())
-        painter.setPen(QPen(QColor(255, 255, 255, 0), 0))
-        painter.setBrush(QColor("#F00"))
-        painter.drawEllipse(QRect(self.getX(), self.getX(), self.getWidth(), self.getHeight()))
+        painter.setPen(self.__pen)
+        painter.setBrush(self.__color)
+        painter.drawEllipse(self.getX(), self.getX(), self.getWidth(), self.getHeight())
         painter.end()
 
 

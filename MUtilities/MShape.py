@@ -2,6 +2,7 @@ __author__ = 'MaitreyaBuddha'
 
 from PySide.QtGui import QWidget
 
+
 class MShape(QWidget):
     def __init__(self):
         QWidget.__init__(self)

@@ -1,11 +1,10 @@
 __author__ = 'MaitreyaBuddha'
 
 import sys
-
 from PySide.QtGui import *
-
 from MComponents.MRadioButton import MRadioButton
 from MUtilities import MColors
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -32,6 +31,7 @@ class MainWindow(QWidget):
         # btn.clicked.connect(radio.unset)
         # layout.addWidget(btn)
         self.setLayout(layout)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

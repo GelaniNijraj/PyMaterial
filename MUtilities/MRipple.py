@@ -1,10 +1,9 @@
 __author__ = 'MaitreyaBuddha'
 
 import time
-
 from PySide.QtGui import QWidget, QPainter, QBrush, QPen, QColor, QApplication
-
 from MUtilities import MColors
+
 
 class MRipple(QWidget):
     def __init__(self, origin, target_center, clip):

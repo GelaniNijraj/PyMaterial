@@ -4,11 +4,12 @@ import time
 from threading import Thread
 from PySide.QtGui import QApplication
 
+
 class MFadeOut():
     @staticmethod
     def stepForward(shape):
         if not shape.getOpacity() <= shape.getMinOpacity():
-            shape.setOpacity(shape.getOpacity()-0.01)
+            shape.setOpacity(shape.getOpacity() - 0.01)
             return False
         else:
             return True
@@ -22,7 +23,7 @@ class MFadeOut():
         t = False
         if shape.isFadeAnimationRunning():
             shape.setFadeAnimationRunning(False)
-            time.sleep(speed+0.001)
+            time.sleep(speed + 0.001)
         if not shape.isFadeAnimationRunning():
             shape.setFadeAnimationRunning(True)
             while not t:
@@ -42,11 +43,12 @@ class MFadeOut():
         t = Thread(target=MFadeOut.action, args=(shape, 0.006))
         t.start()
 
+
 class MFadeIn():
     @staticmethod
     def stepForward(shape):
         if not shape.getOpacity() >= shape.getMaxOpacity():
-            shape.setOpacity(shape.getOpacity()+0.01)
+            shape.setOpacity(shape.getOpacity() + 0.01)
             return False
         else:
             return True
@@ -60,7 +62,7 @@ class MFadeIn():
         t = False
         if shape.isFadeAnimationRunning():
             shape.setFadeAnimationRunning(False)
-            time.sleep(speed+0.001)
+            time.sleep(speed + 0.001)
         if not shape.isFadeAnimationRunning():
             shape.setFadeAnimationRunning(True)
             while not t:

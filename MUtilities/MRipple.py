@@ -28,7 +28,7 @@ class MRipple(QWidget):
         # Default minimum opacity
         self.__minOpacity = 30
         # Default maximum opacity
-        self.__opacity = 255
+        self.__maxOpacity = 255
         # Counter used in release animation
         self.__i = 0
 
@@ -66,9 +66,9 @@ class MRipple(QWidget):
                 else:
                     pass
             self.__r += 1
-            self.__opacity = 255 - (255 * self.__r) / self.__maxRadius
-            if self.__opacity <= self.__minOpacity:
-                self.__opacity = self.__minOpacity
+            self.__maxOpacity = 255 - (255 * self.__r) / self.__maxRadius
+            if self.__maxOpacity <= self.__minOpacity:
+                self.__maxOpacity = self.__minOpacity
             # repainting the canvas
             self.update()
             QApplication.processEvents()
@@ -76,7 +76,7 @@ class MRipple(QWidget):
             time.sleep(self.__speed)
             # increasing step count
             try:
-                if self.__origin == self.__target_center and self.__r == self.__maxRadius and self.__opacity == self.__maxOpacity:
+                if self.__origin == self.__target_center and self.__r == self.__maxRadius and self.__maxOpacity == self.__maxOpacity:
                     self.__finished = True
             except AttributeError:
                 pass
@@ -108,7 +108,7 @@ class MRipple(QWidget):
                 self.update()
                 break
             # reducing alpha to zero, in 23 steps
-            self.__opacity = self.__minOpacity - (self.__minOpacity * self.__i) / self.__releaseSpeed
+            self.__maxOpacity = self.__minOpacity - (self.__minOpacity * self.__i) / self.__releaseSpeed
             self.__i += 1
             # repainting the canvas
             self.update()
@@ -138,7 +138,7 @@ class MRipple(QWidget):
             return
         # setting the masking ellipse
         painter.setClipRegion(self.__clip)
-        self.__color.setAlpha(self.__opacity)
+        self.__color.setAlpha(self.__maxOpacity)
         painter.setBrush(QBrush(self.__color))
         painter.setPen(QPen(QColor(0, 0, 0, 0)))
         painter.drawEllipse(self.__origin, self.__r, self.__r)

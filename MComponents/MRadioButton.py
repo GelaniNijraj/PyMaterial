@@ -1,9 +1,8 @@
-__author__ = 'MaitreyaBuddha'
-
 from PySide.QtGui import *
-from PySide.QtCore import *
 from MUtilities.MShape import MShape
 from MAnimations.MFade import MFadeOut, MFadeIn
+
+__author__ = 'MaitreyaBuddha'
 
 
 class OuterRing(MShape):
@@ -28,7 +27,8 @@ class InnerCircle(MShape):
         MShape.__init__(self)
         self.setWidth(9)
         self.setHeight(9)
-        self.__pen = QPen(QColor(255, 255, 255, 0), 0)
+        self.__penColor = QColor(255, 255, 255, 0)
+        self.__pen = QPen(self.__penColor, 0)
         self.__color = QColor("#F00")
 
     def paintEvent(self, event):
@@ -55,6 +55,8 @@ class MRadioButton(MShape):
         layout.addWidget(self.innerCircle, 0, 0)
         layout.addWidget(self.outerRing, 0, 0)
         self.setLayout(layout)
+        self.setWidth(self.outerRing.getWidth())
+        self.setHeight(self.outerRing.getHeight())
         self.__checked = True
 
     def mousePressEvent(self, event):
@@ -64,4 +66,3 @@ class MRadioButton(MShape):
         else:
             MFadeIn.start(self.innerCircle)
             self.__checked = True
-

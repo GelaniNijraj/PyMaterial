@@ -1,16 +1,16 @@
-__author__ = 'MaitreyaBuddha'
-
 from PySide.QtGui import QColor
 
-#Light theme
+__author__ = 'MaitreyaBuddha'
+
+# Light theme
 BACKGROUND_LIGHT = QColor("#FAFAFA")
 CARD_LIGHT = QColor("#FFFFFF")
 
-#Dark theme
+# Dark theme
 BACKGROUND_DARK = QColor("#303030")
 CARD_DARK = QColor("#424242")
 
-#Teal-Amber color palette
+# Teal-Amber color palette
 DARK_PRIMARY_COLOR = QColor("#00796B")
 PRIMARY_COLOR = QColor("#009688")
 LIGHT_PRIMARY_COLOR = QColor("#B2DFDB")

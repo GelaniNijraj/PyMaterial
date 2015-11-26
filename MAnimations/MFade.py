@@ -1,8 +1,8 @@
-__author__ = 'MaitreyaBuddha'
-
 import time
 from threading import Thread
 from PySide.QtGui import QApplication
+
+__author__ = 'MaitreyaBuddha'
 
 
 class MFadeOut():

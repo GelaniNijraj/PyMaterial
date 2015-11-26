@@ -1,6 +1,6 @@
-__author__ = 'MaitreyaBuddha'
-
 from PySide.QtGui import QWidget
+
+__author__ = 'MaitreyaBuddha'
 
 
 class MShape(QWidget):

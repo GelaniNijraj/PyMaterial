@@ -1,6 +1,6 @@
 __author__ = 'MaitreyaBuddha'
 
-from PySide.QtGui import QWidget, QGridLayout, QApplication, QGraphicsLayout
+from PySide.QtGui import QWidget, QGridLayout, QApplication
 from PySide.QtCore import QMargins
 
 
@@ -21,7 +21,7 @@ class MShape(QWidget):
         self.__minOpacity = 0
         self.__marginX = 0
         self.__marginY = 0
-        # Animation related flafs
+        # Animation related flags
         self.__fadeAnimation = False
         self.__scaleAnimation = False
         # Defining the layout which will hold the child shapes of the widget

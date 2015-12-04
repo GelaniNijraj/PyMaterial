@@ -6,5 +6,3 @@ from PySide.QtGui import QApplication
 from MAnimations.MAnimator import MAnimator
 
 class MFadeOut(MAnimator):
-    def start(self):
-        pass

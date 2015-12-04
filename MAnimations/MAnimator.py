@@ -23,6 +23,9 @@ class MAnimator():
 
     __run_reversed = False
 
+    __cancel = False
+    __end = False
+
     __start_delay = 0
 
     __duration = 0
@@ -34,18 +37,19 @@ class MAnimator():
     def start(self):
         self.started = True
         for s in self.__shapes:
-            self.__threads.append(Thread(target=self.animate, args=(s)))
+            t = Thread(target=self.animate, args=(s,))
+            t.start()
+            self.__threads.append(t)
+
+    @abc.abstractmethod
+    def animate(self, shape):
+        raise NotImplementedError
 
     def cancel(self):
-        self.running = False
+        self.canceled = True
 
-    @abc.abstractmethod
-    def animate(self):
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def end(self):
-        raise NotImplementedError
+        self.ended = True
 
     def pause(self):
         if self.running and not self.paused:
@@ -53,7 +57,7 @@ class MAnimator():
 
     def resume(self):
         if self.__paused:
-            self.__paused = False
+             self.__paused = False
 
     def addTarget(self, shape):
         self.__shapes.append(shape)
@@ -74,11 +78,27 @@ class MAnimator():
         self.__started = started
 
     @property
+    def canceled(self):
+        return self.__cancel
+
+    @canceled.setter
+    def canceled(self, cancel):
+        self.__cancel = cancel
+
+    @property
+    def ended(self):
+        return self.__end
+
+    @ended.setter
+    def ended(self, end):
+        self.__end = end
+
+    @property
     def paused(self):
         return self.__paused
 
     @paused.setter
-    def started(self, paused):
+    def paused(self, paused):
         self.__paused = paused
 
     @property
@@ -103,7 +123,7 @@ class MAnimator():
 
     @start_delay.setter
     def start_delay(self, delay):
-        self.__start_delay = delay*1000
+        self.__start_delay = delay/1000
 
     @property
     def can_run_reversed(self):

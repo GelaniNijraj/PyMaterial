@@ -1,68 +1,131 @@
 __author__ = "MaitreyaBuddha"
 
 import abc
-import time
 from threading import Thread
-from PySide.QtCore import Signal
-from MUtilities import MShape
+from PySide.QtCore import Signal, QObject
 
 
-class MAnimator():
+class MAnimator(QObject):
     __metaclass__ = abc.ABCMeta
 
-    iStartSignal = Signal(str)
-    iPauseSignal = Signal(str)
-    iEndSignal = Signal(str)
-    iResumeSignal = Signal(str)
+    # Various signals which will be emitted from inside the animate function
+    # in the subclass
+    start_signal = Signal()
+    pause_signal = Signal()
+    end_signal = Signal()
+    resume_signal = Signal()
+    cancel_signal = Signal()
 
-    __paused = False
+    def __init__(self):
+        QObject.__init__(self)
 
-    __started = False
+        # Indicates that the animation is paused in between
+        self.__paused = False
 
-    __running = False
+        # Indicates that the animation have been started
+        self.__started = False
 
-    __run_reversed = False
+        # Indicates that the animation is currently running
+        self.__running = False
 
-    __cancel = False
-    __end = False
+        # Indicates that the animation can be run in reverse
+        self.__run_reversed = False
 
-    __start_delay = 0
+        # Indicate that the animation is canceled
+        self.__cancel = False
 
-    __duration = 0
+        # Indicates that the animation is ended
+        self.__end = False
 
-    __shapes = []
+        # Stores the start delay of the animation in seconds
+        self.__start_delay = 0
 
-    __threads = []
+        # Stores the duration in which the animation should be completed
+        self.__duration = 0
+
+        # Holds the shapes to which animation should be applied
+        self.__shapes = []
 
     def start(self):
+        """
+        This method is called by the user to start the animation on a shape
+        after setting the delay. It starts the thread of animate() function
+        and passes the list of shapes as an argument.
+        :return: None
+        """
         self.started = True
-        for s in self.__shapes:
-            t = Thread(target=self.animate, args=(s,))
-            t.start()
-            self.__threads.append(t)
+        t = Thread(target=self.animate, args=(self.__shapes,))
+        t.start()
 
     @abc.abstractmethod
     def animate(self, shape):
+        """
+        This method must contain the core animation logic and should also
+        emit appropriate signals at appropriate point in the execution
+        in the overridden method.
+        :param shape: list
+        :return: None
+        """
         raise NotImplementedError
 
     def cancel(self):
+        """
+        This method sets the __cancel flag to True. Canceling the animation
+        includes setting the values of the shape to the values which were set
+        before the animation started.
+        This flag should be continuously checked and appropriate action must
+        be taken inside the animate().
+        :return: None
+        """
         self.canceled = True
 
     def end(self):
+        """
+        This method sets the __end flag to True. Ending the animation includes
+        setting the values of the shape to the final values which would have
+        been there if animation was completed successfully.
+        This flag should be continuously checked and appropriate action must
+        be taken inside the animate().
+        :return: None
+        """
         self.ended = True
 
     def pause(self):
+        """
+        This method sets the the __paused flag to True(pauses the animation)
+        if it's not already paused and is running.
+        This flag should be continuously checked and appropriate action must
+        be taken inside the animate().
+        :return: None
+        """
         if self.running and not self.paused:
             self.paused = True
 
     def resume(self):
+        """
+        This method sets the __paused flag to False(resumes the animation)
+        if it is paused.
+        :return: None
+        """
         if self.__paused:
              self.__paused = False
 
-    def addTarget(self, shape):
+    def add_target(self, shape):
+        """
+        This method adds a target MShape object to the __shapes list which
+        is passed to the animate() thread.
+        Each shape in __shapes should be processed and updated individually.
+        :param shape: MShape : The shape on which animation is to be done.
+        :return: None
+        """
         self.__shapes.append(shape)
 
     def removeTarget(self, shape):
+        """
+        This method removes the specified shape from the __shapes list.
+        :param shape: MShape : Shape to be removed from the __shapes list.
+        :return: bool : Whether or not the shape was found or not.
+        """
         try:
             self.__shapes.remove(shape)
             return True
@@ -71,6 +134,10 @@ class MAnimator():
 
     @property
     def started(self):
+        """
+
+        :return: bool
+        """
         return self.__started
 
     @started.setter

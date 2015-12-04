@@ -4,8 +4,7 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from MUtilities.MShape import MShape
 from MUtilities import MColors
-from MAnimations.MFade import MFadeOut, MFadeIn
-from MAnimations.MScale import MScaleOut, MScaleIn
+from MAnimations.MFade import MFadeOut
 
 
 class OuterRing(MShape):
@@ -32,12 +31,6 @@ class OuterRing(MShape):
 class InnerCircle(MShape):
     def __init__(self):
         MShape.__init__(self)
-        self.setMaxWidth(10)
-        self.setMaxHeight(10)
-        self.setWidth(10)
-        self.setHeight(10)
-        self.setMarginX(20)
-        self.setMarginY(20)
         self.__pen = QPen(MColors.PRIMARY_COLOR, 0)
         self.__color = MColors.PRIMARY_COLOR
 
@@ -45,10 +38,10 @@ class InnerCircle(MShape):
         painter = QPainter()
         painter.begin(self)
         painter.setRenderHint(QPainter.Antialiasing)
-        painter.setOpacity(self.getOpacity())
+        painter.setOpacity(self.opacity)
         painter.setPen(self.__pen)
         painter.setBrush(self.__color)
-        painter.drawEllipse(self.getX()+self.getMarginX(), self.getY()+self.getMarginY(), self.getWidth(), self.getHeight())
+        painter.drawEllipse(0, 0, 10, 10)
         painter.end()
 
 
@@ -57,18 +50,23 @@ class MRadioButton(MShape):
         MShape.__init__(self)
         self.setFixedSize(QSize(50, 50))
         self.innerCircle = InnerCircle()
-        self.outerRing = OuterRing()
-        self.addLayoutItem(self.outerRing, 0, 0)
-        self.addLayoutItem(self.innerCircle, 0, 0)
-        self.setLayout(self.getLayout())
+        # self.outerRing = OuterRing()
+        # self.addLayoutItem(self.outerRing, 0, 0)
+        self.add_layout_item(self.innerCircle, 0, 0)
+        self.setLayout(self.layout)
         self.__checked = True
+        self.__fade = MFadeOut()
+        self.__fade.add_target(self.innerCircle)
+        self.__fade.end_signal.connect(self.test_slot)
+
+    def test_slot(self):
+        print("Ended gracefully")
 
     def mousePressEvent(self, event):
         if self.__checked:
-            MScaleOut.start(self.innerCircle, 0.006)
+            self.__fade.start()
             self.__checked = False
         else:
-            MScaleIn.start(self.innerCircle, 0.006)
             self.__checked = True
 
     def paintEvent(self, event):

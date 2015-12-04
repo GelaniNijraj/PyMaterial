@@ -11,14 +11,14 @@ class MShape(QWidget):
         self.__y = 0
         self.__width = 0
         self.__height = 0
-        self.__opacity = 1
+        self.__opacity = 1.0
         self.__clip = None
         self.__max_width = 0
         self.__max_height = 0
         self.__min_width = 0
         self.__min_height = 0
-        self.__max_opacity = 1
-        self.__min_opacity = 0
+        self.__max_opacity = 1.0
+        self.__min_opacity = 0.0
         self.__margin_x = 0
         self.__margin_y = 0
         # Defining the layout which will hold the child shapes of the widget
@@ -27,6 +27,14 @@ class MShape(QWidget):
         self.__layout.setHorizontalSpacing(0)
         self.__layout.setContentsMargins(QMargins(0, 0, 0, 0))
         self.__children = []
+
+    def add_layout_item(self, shape, x, y):
+        self.__layout.addWidget(shape, x, y)
+
+
+    @property
+    def layout(self):
+        return self.__layout
 
     @property
     def width(self):
@@ -91,6 +99,8 @@ class MShape(QWidget):
     @opacity.setter
     def opacity(self, opacity):
         self.__opacity = opacity
+        if self.opacity < self.min_opacity:
+            self.opacity = self.min_opacity
 
     @property
     def min_opacity(self):

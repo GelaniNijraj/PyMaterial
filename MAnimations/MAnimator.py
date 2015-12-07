@@ -1,298 +1,201 @@
-__author__ = "Samvid Mistry"
+__author__ = "MaitreyaBuddha"
 
 import abc
+from threading import Thread
+from PySide.QtCore import Signal, QObject
 
 
-class MAnimator:
-    """
-    Super class for all the classes providing any kind of animation support with MShape.
-
-    @see MUtilities.MShape
-    """
+class MAnimator(QObject):
     __metaclass__ = abc.ABCMeta
 
-    # Listener for lifecycle of animation.
-    iListeners = list()
+    # Various signals which will be emitted from inside the animate function
+    # in the subclass
+    start_signal = Signal()
+    pause_signal = Signal()
+    end_signal = Signal()
+    resume_signal = Signal()
+    cancel_signal = Signal()
 
-    # Listener for pause and resume of animation.
-    iPauseListeners = list()
+    def __init__(self):
+        QObject.__init__(self)
 
-    # Check for animation state.
-    iPaused = False
+        # Indicates that the animation is paused in between
+        self.__paused = False
 
-    # Checks if the animation is started or not. This gives true if the animation is currently running
-    # as well as returns true if the animation is in starting delay.
-    iStarted = False
+        # Indicates that the animation have been started
+        self.__started = False
 
-    # Check if animation is started. This means that the animation is past any start delay and is currently
-    # animating the MShape
-    iRunning = False
+        # Indicates that the animation is currently running
+        self.__running = False
 
-    # The time to wait after call to start to start the animation. It is in milliseconds.
-    iStartDelay = 0
+        # Indicates that the animation can be run in reverse
+        self.__run_reversed = False
 
-    # The duration of animation
-    iDuration = 0
+        # Indicate that the animation is canceled
+        self.__cancel = False
+
+        # Indicates that the animation is ended
+        self.__end = False
+
+        # Stores the start delay of the animation in seconds
+        self.__start_delay = 0
+
+        # Stores the duration in which the animation should be completed
+        self.__duration = 0
+
+        # Holds the shapes to which animation should be applied
+        self.__shapes = []
 
     def start(self):
         """
-        Starts the animation on the MShape. If no delay is set, then the animation would immediately start
-        by setting initial values and calling {@link MAnimationListener.onAnimationStart()}, else it would start
-        elapsing the delay. Subclasses should call {@link notifyAnimationStart()} when appropriate to tell the
-        listeners that the animation has been started.
+        This method is called by the user to start the animation on a shape
+        after setting the delay. It starts the thread of animate() function
+        and passes the list of shapes as an argument.
         :return: None
-
-        @see notifyAnimationStart()
         """
-        pass
+        self.started = True
+        t = Thread(target=self.animate, args=(self.__shapes,))
+        t.start()
+
+    @abc.abstractmethod
+    def animate(self, shape):
+        """
+        This method must contain the core animation logic and should also
+        emit appropriate signals at appropriate point in the execution
+        in the overridden method.
+        :param shape: list
+        :return: None
+        """
+        raise NotImplementedError
 
     def cancel(self):
         """
-        Cancels the animation on MShape. Cancelling involves setting all the values of MShape to the values
-        before animation started. Subclasses should call {@link notifyAnimationCancel()} when appropriate to
-        tell the listeners that the animation has been cancelled.
+        This method sets the __cancel flag to True. Canceling the animation
+        includes setting the values of the shape to the values which were set
+        before the animation started.
+        This flag should be continuously checked and appropriate action must
+        be taken inside the animate().
         :return: None
-
-        @see notifyAnimationCancel()
         """
-        pass
+        self.canceled = True
 
     def end(self):
         """
-        Ends the animation on MShape. Ending animation would skip all the frames between the current state
-        of animation and end of animation and will directly set MShape to final values. Subclasses should call
-        {@link notifyAnimationEnd()} when appropriate to tell the listeners that the animation has been ended.
+        This method sets the __end flag to True. Ending the animation includes
+        setting the values of the shape to the final values which would have
+        been there if animation was completed successfully.
+        This flag should be continuously checked and appropriate action must
+        be taken inside the animate().
         :return: None
-
-        @see notifyAnimationEnd()
         """
-        pass
-
-    def notifyAnimationStart(self):
-        """
-        Tells all the animation listeners that animation has started.
-        :return: None
-
-        @see MAnimationListener
-        """
-        if len(self.iListeners) > 0:
-            for listener in self.iListeners:
-                listener.onAnimationStart(self)
-
-    def notifyAnimationCancel(self):
-        """
-        Tells all the animation listeners that animation has cancelled.
-        :return: None
-
-        @see MAnimationListener
-        """
-        if len(self.iListeners) > 0:
-            for listener in self.iListeners:
-                listener.onAnimationCancel(self)
-
-    def notifyAnimationEnd(self):
-        """
-        Tells all the animation listeners that animation has ended.
-        :return: None
-
-        @see MAnimationListener
-        """
-        if len(self.iListeners) > 0:
-            for listener in self.iListeners:
-                listener.onAnimationEnd(self)
-
-    def isRunning(self):
-        """
-        Checks if the animation is currently running. This means the animation is currently out of start
-        delay and is currently animation MShape.
-        :return: Boolean
-        """
-        return not self.iRunning
-
-    def isPaused(self):
-        """
-        A logical compliment of method {@link isRunning()}
-        :return: Boolean
-        """
-        return self.iPaused
+        self.ended = True
 
     def pause(self):
         """
-        Pauses the animation and calls {@link MAnimationPauseListener.onAnimationPause()} on all the
-        {@link MAnimationPauseListener} listeners.
+        This method sets the the __paused flag to True(pauses the animation)
+        if it's not already paused and is running.
+        This flag should be continuously checked and appropriate action must
+        be taken inside the animate().
         :return: None
         """
-        if self.iRunning and not self.iPaused:
-            self.iPaused = True
-            if len(self.iPauseListeners) > 0:
-                for listener in self.iPauseListeners:
-                    listener.onAnimationPause(self)
+        if self.running and not self.paused:
+            self.paused = True
 
     def resume(self):
         """
-        Resumes the animation and calls {@link MAnimationPauseListener.onAnimationResume()} on all the
-        {@link MAnimationPauseListener} listeners.
+        This method sets the __paused flag to False(resumes the animation)
+        if it is paused.
         :return: None
         """
-        if self.iPaused:
-            self.iPaused = False
-            if len(self.iPauseListeners) > 0:
-                for listener in self.iPauseListeners:
-                    listener.onAnimationResume(self)
+        if self.__paused:
+             self.__paused = False
 
-    def setStartDelay(self, startDelay):
+    def add_target(self, shape):
         """
-        Sets the start delay for animation. Animator would wait this much milliseconds to actually start
-        the animation.
-        :param startDelay: int
+        This method adds a target MShape object to the __shapes list which
+        is passed to the animate() thread.
+        Each shape in __shapes should be processed and updated individually.
+        :param shape: MShape : The shape on which animation is to be done.
         :return: None
         """
-        self.iStartDelay = startDelay
+        self.__shapes.append(shape)
 
-    def getStartDelay(self):
-        """
-        Returns start delay for animation in milliseconds.
-        :return: int
-
-        @see setStartDelay()
-        """
-        return self.iStartDelay
-
-    def setDuration(self, duration):
-        """
-        Total duration of animation in milliseconds.
-        :param duration: int
-        :return: int
-        """
-        self.iDuration = duration
-
-    def getDuration(self):
-        """
-        Returns the total duration of animation in milliseconds
-        :return: int
-
-        @see setDuration()
-        """
-        return self.iDuration
-
-    @abc.abstractmethod
-    def setInterpolator(self, interpolator):
-        """
-        Sets the interpolator for animation to the provided interpolator. For more information on what an
-        interpolator is, see {@link MInterpolator}.
-        :param interpolator: MInterpolator
-        :return: None
-
-        @see MInterpolator
-        """
-        pass
-
-    def getInterpolator(self):
-        """
-        Returns the interpolator used by the animator. For more information on what an
-        interpolator is, see {@link MInterpolator}.
-        :return: None
-
-        #see setInterpolator()
-        """
-        return None
-
-    def addListener(self, listener):
-        """
-        Adds an animation listener to the animation, for more information on what an animation listener is, see
-        {@link MAnimationListener}
-        :param listener: MAnimationListener
-        :return: None
-
-        @see MAnimationListener
-        """
-        self.iListeners.append(listener)
-
-    def removeListener(self, listener):
-        """
-        Removes the provided animation listener from the list of animation listeners, for more information
-        on what an animation listener is, see {@link MAnimationListener}
-        :param listener: MAnimationListener
-        :return: None
-
-        @see MAnimationListener
-        """
-        if len(self.iListeners) > 0:
-            self.iListeners.remove(listener)
-
-    def addPauseListener(self, listener):
-        """
-        Adds an animation pause listener to the animation, for more information on what an animation pause listener
-        is, see {@link MAnimationPauseListener}
-        :param listener: MAnimationPauseListener
-        :return: None
-
-        @see MAnimationPauseListener
-        """
-        self.iPauseListeners.append(listener)
-
-    def removePauseListener(self, listener):
-        """
-        Removes the provided animation pause listener from the list of animation pause listeners, for more
-        information on what an animation pause listener is, see {@link MAnimationPauseListener}
-        :param listener: MAnimationPauseListener
-        :return: None
-
-        @see MAnimationPauseListener
-        """
-        if len(self.iPauseListeners) > 0:
-            self.iPauseListeners.remove(listener)
-
-    def removeAllListeners(self):
-        """
-        Removes all the listeners from animator object, for more information on listeners, see
-        {@link MAnimationListener, MAnimationPauseListener}.
-        :return: None
-
-        @see MAnimationListener, MAnimationPauseListener
-        """
-        if len(self.iListeners) > 0:
-            for listener in self.iListeners:
-                self.iListeners.remove(listener)
-
-        if len(self.iPauseListeners) > 0:
-            for listener in self.iPauseListeners:
-                self.iPauseListeners.remove(listener)
-
-    @abc.abstractmethod
-    def addTarget(self, shape):
-        """
-        Sets the target for animation to run on. Multiple targets can also be assigned if subclass implements so.
-        :param shape: MShape
-        :return: None
-        """
-        pass
-
-    @abc.abstractmethod
     def removeTarget(self, shape):
         """
-        Removes the target for animation to run on.
-        :param shape: MShape
-        :return: None
+        This method removes the specified shape from the __shapes list.
+        :param shape: MShape : Shape to be removed from the __shapes list.
+        :return: bool : Whether or not the shape was found or not.
+        """
+        try:
+            self.__shapes.remove(shape)
+            return True
+        except ValueError:
+            return False
 
-        @see addTarget(MShape)
+    @property
+    def started(self):
         """
-        pass
 
-    @abc.abstractmethod
-    def canRunReversed(self):
+        :return: bool
         """
-        Tells if the animation can be run in reversed manner.
-        :return: Boolean
+        return self.__started
 
-        @see runReversed()
-        """
-        return False
+    @started.setter
+    def started(self, started):
+        self.__started = started
 
-    @abc.abstractmethod
-    def runReversed(self):
-        """
-        Method to allow animation to be run in reverse manner. Subclasses can provide support for that.
-        :return: None
-        """
-        pass
+    @property
+    def canceled(self):
+        return self.__cancel
+
+    @canceled.setter
+    def canceled(self, cancel):
+        self.__cancel = cancel
+
+    @property
+    def ended(self):
+        return self.__end
+
+    @ended.setter
+    def ended(self, end):
+        self.__end = end
+
+    @property
+    def paused(self):
+        return self.__paused
+
+    @paused.setter
+    def paused(self, paused):
+        self.__paused = paused
+
+    @property
+    def duration(self):
+        return self.__duration
+
+    @duration.setter
+    def duration(self, duration):
+        self._duration = duration
+
+    @property
+    def running(self):
+        return self.__running
+
+    @running.setter
+    def running(self, is_it):
+        self.__running = is_it
+
+    @property
+    def start_delay(self):
+        return self.__start_delay
+
+    @start_delay.setter
+    def start_delay(self, delay):
+        self.__start_delay = delay/1000
+
+    @property
+    def can_run_reversed(self):
+        return self.__run_reversed
+
+    @can_run_reversed.setter
+    def can_run_recersed(self, can):
+        self.__run_reversed = can

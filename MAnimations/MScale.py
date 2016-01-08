@@ -28,7 +28,7 @@ class MScaleOut():
         shape.setScaleAnimationRunning(False)
 
     @staticmethod
-    def action(shape, speed = 0.016667):
+    def action(shape, speed=0.016667):
         t = False
         if shape.isScaleAnimationRunning():
             shape.setScaleAnimationRunning(False)
@@ -49,7 +49,7 @@ class MScaleOut():
 
     @staticmethod
     def start(shape, speed):
-        t = Thread(target = MScaleOut.action, args = (shape, speed))
+        t = Thread(target=MScaleOut.action, args=(shape, speed))
         t.start()
 
 
@@ -75,7 +75,7 @@ class MScaleIn():
         shape.setScaleAnimationRunning(False)
 
     @staticmethod
-    def action(shape, speed = 0.016667):
+    def action(shape, speed=0.016667):
         t = False
         if shape.isScaleAnimationRunning():
             shape.setScaleAnimationRunning(False)
@@ -96,6 +96,5 @@ class MScaleIn():
 
     @staticmethod
     def start(shape, speed):
-        t = Thread(target = MScaleIn.action, args = (shape, speed))
+        t = Thread(target=MScaleIn.action, args=(shape, speed))
         t.start()
-

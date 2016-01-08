@@ -1,0 +1,21 @@
+This is a basic file containing conventions to use when submitting your code to PyMaterial Project. These
+guidelines would also be helpful if one wants to read the code of PyMaterial project. These
+are good conventions to follow when making projects using PyMaterial Framework because these conventions
+are mostly followed internally in framework.
+
+-> All the instance variables of classes should prefix i to the name, i.e. iDuration, iWidth
+-> No prefix for private instance variables of classes.
+-> All the static variables of classes should prefix s to the name, i.e. sSample, sStaticVariable
+-> Code should be written according to PEP8 standards. (Optional)
+-> Documentation of method should be given immediately after the method start and should be in block(Three quoted)
+   comment.
+-> Documentation given inside the method, i.e. for variables and loops, should be given by single line
+   comments.
+-> Links to other classes and methods of same or different classes should be enclosed in curly brackets({})
+   and should be prefixed by @link annotation.
+-> Other things which might be of interest of the reader should be written at the end of method documentation
+   with the @see annotation prefixed to the class or method name.
+-> Links to other classes and methods of project should be given from the root of the project if reasonably
+   important.
+-> When using @see or @link, use direct name for method if the method is of same class and use direct name of
+   class if the class is of same package. Otherwise try to use fully qualified names.

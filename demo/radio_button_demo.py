@@ -1,9 +1,10 @@
-__author__ = 'MaitreyaBuddha'
-
 import sys
 from PySide.QtGui import *
 from MComponents.MRadioButton import MRadioButton
 from MUtilities import MColors
+from MAnimations import MAnimator
+
+__author__ = 'MaitreyaBuddha'
 
 
 class MainWindow(QWidget):

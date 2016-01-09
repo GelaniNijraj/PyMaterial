@@ -21,6 +21,8 @@ class MShape(QWidget):
         self.__min_opacity = 0.0
         self.__margin_x = 0
         self.__margin_y = 0
+        self.__padding_x = 0
+        self.__padding_y = 0
         # Defining the layout which will hold the child shapes of the widget
         self.__layout = QGridLayout()
         self.__layout.setVerticalSpacing(0)
@@ -30,7 +32,6 @@ class MShape(QWidget):
 
     def add_layout_item(self, shape, x, y):
         self.__layout.addWidget(shape, x, y)
-
 
     @property
     def layout(self):
@@ -117,3 +118,19 @@ class MShape(QWidget):
     @max_opacity.setter
     def max_opacity(self, opacity):
         self.__max_opacity = opacity
+
+    @property
+    def margin_x(self):
+        return self.__margin_x
+
+    @margin_x.setter
+    def margin_x(self, margin):
+        self.__margin_x = margin
+
+    @property
+    def margin_y(self):
+        return self.__margin_y
+
+    @margin_y.setter
+    def margin_y(self, margin):
+        self.__margin_y = margin

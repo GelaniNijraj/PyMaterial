@@ -49,7 +49,7 @@ class MFadeOut(MAnimator):
                 self.resume_signal.emit()
             else:
                 # Sleeping for 1/60 seconds, for 60fps
-                time.sleep(1/60)
+                time.sleep(1 / 60)
                 # Flag to find out even if one shape is left to complete the
                 # whole fade out animation
                 completed = False
@@ -60,7 +60,7 @@ class MFadeOut(MAnimator):
                         # TODO:
                         # calculate the opacity to be reduced on each frame
                         # to fit animation inside the duration
-                        s.opacity = float("%.2f"%(s.opacity-0.01))
+                        s.opacity = float("%.2f" % (s.opacity - 0.01))
                         s.update()
                         QApplication.processEvents()
                         print(s.opacity)

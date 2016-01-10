@@ -174,7 +174,7 @@ class MAnimator(QObject):
 
     @duration.setter
     def duration(self, duration):
-        self._duration = duration
+        self.__duration = duration
 
     @property
     def running(self):
@@ -197,5 +197,5 @@ class MAnimator(QObject):
         return self.__run_reversed
 
     @can_run_reversed.setter
-    def can_run_recersed(self, can):
+    def can_run_reversed(self, can):
         self.__run_reversed = can

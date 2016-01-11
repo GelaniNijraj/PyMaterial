@@ -134,3 +134,11 @@ class MShape(QWidget):
     @margin_y.setter
     def margin_y(self, margin):
         self.__margin_y = margin
+
+    @property
+    def clip(self):
+        return self.__clip
+
+    @clip.setter
+    def clip(self, value):
+        self.__clip = value

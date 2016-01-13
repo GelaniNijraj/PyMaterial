@@ -108,7 +108,7 @@ class MAnimator(QObject):
         :return: None
         """
         if self.__paused:
-             self.__paused = False
+            self.__paused = False
 
     def add_target(self, shape):
         """
@@ -190,7 +190,7 @@ class MAnimator(QObject):
 
     @start_delay.setter
     def start_delay(self, delay):
-        self.__start_delay = delay/1000
+        self.__start_delay = delay / 1000
 
     @property
     def can_run_reversed(self):

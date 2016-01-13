@@ -14,7 +14,7 @@ class MCircularReveal(MAnimator):
     def animate(self, shapes):
         self.start_signal.emit()
 
-        self.wait_for_start_delay()
+        time.sleep(self.start_delay)
 
         self.running = True
 
@@ -37,7 +37,7 @@ class MCircularReveal(MAnimator):
                 return
 
             elif self.ended:
-                self.end_animation()
+                self.end_signal.emit()
                 return
 
             else:
@@ -70,15 +70,9 @@ class MCircularReveal(MAnimator):
                         self.ended = True
                         return
 
-    def end_animation(self):
-        self.end_signal.emit()
-
     def cancel_animation(self, shapes, original_width, original_height):
         for i, s in enumerate(shapes):
             s.width = original_width[i]
             s.height = original_height[i]
 
         self.cancel_signal.emit()
-
-    def wait_for_start_delay(self):
-        time.sleep(self.start_delay)

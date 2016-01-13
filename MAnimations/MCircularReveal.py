@@ -10,6 +10,7 @@ class MCircularReveal(MAnimator):
     def __init__(self):
         MAnimator.__init__(self)
         self.__clip = QPainterPath()
+        self.duration = 300
 
     def animate(self, shapes):
         self.start_signal.emit()
@@ -23,6 +24,8 @@ class MCircularReveal(MAnimator):
         centers = []
         animating_width = []
         animating_height = []
+        inc_width = []
+        inc_height = []
 
         for s in shapes:
             original_width.append(s.width)
@@ -30,6 +33,8 @@ class MCircularReveal(MAnimator):
             animating_width.append(0)
             animating_height.append(0)
             centers.append(-1)
+            inc_width.append(float(s.width) / self.duration)
+            inc_height.append(float(s.height) / self.duration)
 
         while self.running or self.paused:
             if self.canceled:
@@ -41,7 +46,7 @@ class MCircularReveal(MAnimator):
                 return
 
             else:
-                time.sleep(1 / 60)
+                time.sleep(1 / 1000)
                 completed = False
 
                 for i, s in enumerate(shapes):
@@ -59,8 +64,8 @@ class MCircularReveal(MAnimator):
                         print(str(s.width) + " " + str(s.height) + " " + str(animating_width[i]) + " " + str(
                                 animating_height[i]))
 
-                        animating_width[i] += 0.2
-                        animating_height[i] += 0.2
+                        animating_width[i] += inc_width[i]
+                        animating_height[i] += inc_height[i]
                     else:
                         completed = True
 

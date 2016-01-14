@@ -16,10 +16,15 @@ class MFadeOut(MAnimator):
         self.running = True
         # Used to store the original opacities of the shapes
         original_opacity = []
+        # Used to store opacity to be reduced bu each frame
+        reduce_rate = []
         # Getting the original opacities of shapes in case the animation is
         # canceled in between
         for s in shapes:
             original_opacity.append(s.opacity)
+            # Uses formula (((start - target) / fps) * (1000 / duration))
+            reduce_rate.append((s.opacity / self.fps) * (1000 / self.duration))
+
         # Main thread loop
         while self.running or self.paused:
             if self.canceled:
@@ -49,23 +54,21 @@ class MFadeOut(MAnimator):
                 self.resume_signal.emit()
             else:
                 # Sleeping for 1/60 seconds, for 60fps
-                time.sleep(1 / 60)
+                time.sleep(1 / self.fps)
                 # Flag to find out even if one shape is left to complete the
                 # whole fade out animation
                 completed = False
+                shape_counter = 0
                 for s in shapes:
                     if s.opacity > s.min_opacity:
                         # Reducing the opacity by 0.1 if the opacity is not
                         # already below minimum
-                        # TODO:
-                        # calculate the opacity to be reduced on each frame
-                        # to fit animation inside the duration
-                        s.opacity = float("%.2f" % (s.opacity - 0.01))
+                        s.opacity = float("%.6f" % (s.opacity - reduce_rate[shape_counter]))
                         s.update()
                         QApplication.processEvents()
-                        print(s.opacity)
                     else:
                         completed = True
+                    shape_counter += 1
 
                 if completed:
                     # Emitting end signal

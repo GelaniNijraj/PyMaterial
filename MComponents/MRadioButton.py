@@ -4,6 +4,7 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 
 from MAnimations.MFade import MFadeOut
+from MAnimations.MCircularReveal import MCircularReveal
 from MComponents.MShape import MShape
 from MUtilities import MColors
 
@@ -50,6 +51,8 @@ class InnerCircle(MShape):
         painter = QPainter()
         painter.begin(self)
         painter.setRenderHint(QPainter.Antialiasing)
+        if self.clip is not None:
+            painter.setClipPath(self.clip)
         painter.setOpacity(self.opacity)
         painter.setPen(self.__pen)
         painter.setBrush(self.__color)
@@ -73,15 +76,18 @@ class MRadioButton(MShape):
         self.setLayout(self.layout)
         self.__pen = QPen(QColor('#FFF'), 2)
         self.__checked = True
-        self.__fade = MFadeOut()
-        self.__fade.duration = 100
-        self.__fade.add_target(self.innerCircle)
+        # self.__fade = MFadeOut()
+        # self.__fade.duration = 100
+        # self.__fade.add_target(self.innerCircle)
+        self.__reveal = MCircularReveal()
+        self.__reveal.duration = 100
+        self.__reveal.add_target(self.innerCircle)
         self.__bounding_rect = QRect(self.x() + self.margin_x / 2, self.y() + self.margin_y / 2,
                                      self.width - self.margin_x, self.height - self.margin_y)
 
     def mousePressEvent(self, event):
         if self.__checked:
-            self.__fade.start()
+            self.__reveal.start()
             self.__checked = False
         else:
             self.__checked = True

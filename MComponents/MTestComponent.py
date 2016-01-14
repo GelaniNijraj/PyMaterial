@@ -19,7 +19,7 @@ class MTestComponent(MShape):
         self.__pen = QPen(self.__color, 0)
         self.__painter = QPainter()
         self.__reveal = MCircularReveal()
-        self.__reveal.duration = 1000
+        self.__reveal.duration = 10000
         self.__reveal.add_target(self)
         self.__bounding_rect = QRect(10, 15, self.width, self.height)
 
@@ -35,3 +35,6 @@ class MTestComponent(MShape):
 
     def mousePressEvent(self, event):
         self.__reveal.start()
+
+    def trigger_cancel(self):
+        self.__reveal.cancel()

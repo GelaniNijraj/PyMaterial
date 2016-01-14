@@ -46,6 +46,9 @@ class MAnimator(QObject):
         # Holds the shapes to which animation should be applied
         self.__shapes = []
 
+        # Framerate of the animation
+        self.__fps = 60
+
     def start(self):
         """
         This method is called by the user to start the animation on a shape
@@ -199,3 +202,11 @@ class MAnimator(QObject):
     @can_run_reversed.setter
     def can_run_reversed(self, can):
         self.__run_reversed = can
+
+    @property
+    def fps(self):
+        return self.__fps
+
+    @fps.setter
+    def fps(self, fps):
+        self.__fps = fps

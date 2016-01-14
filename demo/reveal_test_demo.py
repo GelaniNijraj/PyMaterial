@@ -17,10 +17,15 @@ class MainWindow(QWidget):
 
     def addComponents(self):
         layout = QGridLayout()
-        test1 = MTestComponent()
-        layout.addWidget(test1)
+        self.test1 = MTestComponent()
+        cancel = QPushButton("Cancel Animation")
+        cancel.clicked.connect(self.cancel_animation)
+        layout.addWidget(self.test1)
+        layout.addWidget(cancel)
         self.setLayout(layout)
 
+    def cancel_animation(self):
+        self.test1.trigger_cancel()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

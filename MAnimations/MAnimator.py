@@ -123,7 +123,7 @@ class MAnimator(QObject):
         """
         self.__shapes.append(shape)
 
-    def removeTarget(self, shape):
+    def remove_target(self, shape):
         """
         This method removes the specified shape from the __shapes list.
         :param shape: MShape : Shape to be removed from the __shapes list.

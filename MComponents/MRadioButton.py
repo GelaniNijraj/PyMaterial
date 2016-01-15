@@ -69,25 +69,33 @@ class MRadioButton(MShape):
         self.width = self.max_width
         self.height = self.max_height
         self.setFixedSize(self.width, self.height)
-        self.innerCircle = InnerCircle()
+        self.innerCircle = None
         self.outerRing = OuterRing()
         self.add_layout_item(self.outerRing, 0, 0)
-        self.add_layout_item(self.innerCircle, 0, 0)
         self.setLayout(self.layout)
-        self.__pen = QPen(QColor('#FFF'), 2)
-        self.__checked = True
-        # self.__fade = MFadeOut()
-        # self.__fade.duration = 100
-        # self.__fade.add_target(self.innerCircle)
+        self.__checked = False
         self.__reveal = MCircularReveal()
-        self.__reveal.duration = 100
-        self.__reveal.add_target(self.innerCircle)
+        self.__reveal.duration = 300
+        self.__fade = MFadeOut()
+        self.__fade.duration = 200
         self.__bounding_rect = QRect(self.x() + self.margin_x / 2, self.y() + self.margin_y / 2,
                                      self.width - self.margin_x, self.height - self.margin_y)
 
     def mousePressEvent(self, event):
         if self.__checked:
-            self.__reveal.start()
-            self.__checked = False
+            self.__reveal.remove_target(self.innerCircle)
+            self.__fade.add_target(self.innerCircle)
+            self.__fade.end_signal.connect(self.on_fade_end)
+            self.__fade.start()
         else:
+            self.innerCircle = InnerCircle()
+            self.add_layout_item(self.innerCircle, 0, 0)
+            self.__reveal.add_target(self.innerCircle)
+            self.__reveal.start()
             self.__checked = True
+
+    def on_fade_end(self):
+        self.__fade.remove_target(self.innerCircle)
+        self.__fade.end_signal.disconnect(self.on_fade_end)
+        self.remove_layout_item(self.innerCircle)
+        self.__checked = False

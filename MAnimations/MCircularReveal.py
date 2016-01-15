@@ -18,6 +18,7 @@ class MCircularReveal(MAnimator):
         time.sleep(self.start_delay)
 
         self.running = True
+        self.ended = False
 
         original_width = []
         original_height = []

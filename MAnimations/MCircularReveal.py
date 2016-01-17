@@ -10,7 +10,6 @@ class MCircularReveal(MAnimator):
     def __init__(self):
         MAnimator.__init__(self)
         self.__clip = QPainterPath()
-        self.duration = 300
 
     def animate(self, shapes):
         self.start_signal.emit()
@@ -23,8 +22,6 @@ class MCircularReveal(MAnimator):
         max_radius = []
         original_clips = []
         centers = []
-        animating_width = []
-        animating_height = []
         animating_radius = []
         inc_rate = []
 
@@ -37,8 +34,8 @@ class MCircularReveal(MAnimator):
             animating_radius.append(0)
             # Getting the original masks; Used in case of cancelation
             original_clips.append(s.clip)
-            # Center of the shape
-            centers.append(QPoint((s.width / 2), (s.height / 2)))
+            # Center of the shape, considering margin
+            centers.append(QPoint((s.width / 2) + s.margin_start, (s.height / 2) + s.margin_top))
             # Calculating the increase rate using the good ol' formula
             inc_rate.append((target / self.fps) * (1000 / self.duration))
 
@@ -79,8 +76,10 @@ class MCircularReveal(MAnimator):
                     else:
                         completed = True
 
-                    if completed:
-                        self.end_signal.emit()
-                        self.started = False
-                        self.ended = True
-                        return
+                # No need to check on every iteration, duration is same so
+                # all objects are gonna end at the same time
+                if completed:
+                    self.end_signal.emit()
+                    self.started = False
+                    self.ended = True
+                    return

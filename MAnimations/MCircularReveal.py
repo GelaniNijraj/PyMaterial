@@ -70,8 +70,8 @@ class MCircularReveal(MAnimator):
 
                     if animating_radius[i] < max_radius[i]:
                         path = QPainterPath()
-                        s.clip = path.addEllipse(centers[i], 10, 10)
-                        print(centers[i], animating_radius[i], animating_radius[i])
+                        path.addEllipse(centers[i], animating_radius[i], animating_radius[i])
+                        s.clip = path
                         s.update()
                         QApplication.processEvents()
                         animating_radius[i] += inc_rate[i]

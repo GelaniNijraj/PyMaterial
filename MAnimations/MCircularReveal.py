@@ -3,7 +3,7 @@ __author__ = "Samvid Mistry"
 import time
 from MAnimations.MAnimator import MAnimator
 from PySide.QtGui import QApplication, QPainterPath
-from PySide.QtCore import QPointF
+from PySide.QtCore import QPoint
 
 
 class MCircularReveal(MAnimator):
@@ -20,53 +20,62 @@ class MCircularReveal(MAnimator):
         self.running = True
         self.ended = False
 
-        original_width = []
-        original_height = []
+        max_radius = []
+        original_clips = []
         centers = []
         animating_width = []
         animating_height = []
-        inc_width = []
-        inc_height = []
+        animating_radius = []
+        inc_rate = []
 
         for s in shapes:
-            original_width.append(s.width)
-            original_height.append(s.height)
-            animating_width.append(0)
-            animating_height.append(0)
-            centers.append(-1)
-            inc_width.append(float(s.width) / self.duration)
-            inc_height.append(float(s.height) / self.duration)
+            # Setting max of width or height as radius, ergo "circular" reveal,
+            # not "oval" reveal
+            target = max(s.width, s.height)
+            max_radius.append(target)
+            # Starting from the zero reaching the max
+            animating_radius.append(0)
+            # Getting the original masks; Used in case of cancelation
+            original_clips.append(s.clip)
+            # Center of the shape
+            centers.append(QPoint((s.width / 2), (s.height / 2)))
+            # Calculating the increase rate using the good ol' formula
+            inc_rate.append((target / self.fps) * (1000 / self.duration))
 
         while self.running or self.paused:
             if self.canceled:
-                self.cancel_animation(shapes, original_width, original_height)
+                for i, s in enumerate(shapes):
+                    s.clip = original_clips[i]
+                self.cancel_signal.emit()
                 return
 
             elif self.ended:
                 self.end_signal.emit()
                 return
 
+            elif self.paused:
+                # Handling the pause
+                self.pause_signal.emit()
+                while not self.paused:
+                    pass
+                self.resume_signal.emit()
+
             else:
-                time.sleep(1 / 1000)
+                # Setting FPS from the animator
+                time.sleep(1 / self.fps)
+
                 completed = False
 
                 for i, s in enumerate(shapes):
 
-                    if animating_width[i] < s.width and animating_height[i] < s.height:
-                        if centers[i] is -1:
-                            centers[i] = QPointF(s.width / 2, s.height / 2)
-
-                        self.__clip = QPainterPath()
-                        self.__clip.addEllipse(centers[i], animating_width[i], animating_height[i])
-                        s.clip = self.__clip
+                    if animating_radius[i] < max_radius[i]:
+                        path = QPainterPath()
+                        s.clip = path.addEllipse(centers[i], 10, 10)
+                        print(centers[i], animating_radius[i], animating_radius[i])
                         s.update()
                         QApplication.processEvents()
+                        animating_radius[i] += inc_rate[i]
 
-                        print(str(s.width) + " " + str(s.height) + " " + str(animating_width[i]) + " " + str(
-                                animating_height[i]))
-
-                        animating_width[i] += inc_width[i]
-                        animating_height[i] += inc_height[i]
                     else:
                         completed = True
 
@@ -75,10 +84,3 @@ class MCircularReveal(MAnimator):
                         self.started = False
                         self.ended = True
                         return
-
-    def cancel_animation(self, shapes, original_width, original_height):
-        for i, s in enumerate(shapes):
-            s.width = original_width[i]
-            s.height = original_height[i]
-
-        self.cancel_signal.emit()

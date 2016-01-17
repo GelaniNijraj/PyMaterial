@@ -14,6 +14,7 @@ class MFadeOut(MAnimator):
         # Sleeping to account the start_delay
         time.sleep(self.start_delay)
         self.running = True
+        self.ended = False
         # Used to store the original opacities of the shapes
         original_opacity = []
         # Used to store opacity to be reduced bu each frame

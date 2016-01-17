@@ -32,6 +32,14 @@ class MShape(QWidget):
 
     def add_layout_item(self, shape, x, y):
         self.__layout.addWidget(shape, x, y)
+        self.__children.append(shape)
+        self.update()
+
+    def remove_layout_item(self, shape):
+        self.__layout.removeWidget(shape)
+        self.__children.remove(shape)
+        shape.deleteLater()
+        self.update()
 
     @property
     def layout(self):

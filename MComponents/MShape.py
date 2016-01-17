@@ -19,8 +19,8 @@ class MShape(QWidget):
         self.__min_height = 0
         self.__max_opacity = 1.0
         self.__min_opacity = 0.0
-        self.__margin_x = 0
-        self.__margin_y = 0
+        self.__margin_start = 0
+        self.__margin_top = 0
         self.__padding_x = 0
         self.__padding_y = 0
         # Defining the layout which will hold the child shapes of the widget
@@ -128,20 +128,20 @@ class MShape(QWidget):
         self.__max_opacity = opacity
 
     @property
-    def margin_x(self):
-        return self.__margin_x
+    def margin_start(self):
+        return self.__margin_start
 
-    @margin_x.setter
-    def margin_x(self, margin):
-        self.__margin_x = margin
+    @margin_start.setter
+    def margin_start(self, margin):
+        self.__margin_start = margin
 
     @property
-    def margin_y(self):
-        return self.__margin_y
+    def margin_top(self):
+        return self.__margin_top
 
-    @margin_y.setter
-    def margin_y(self, margin):
-        self.__margin_y = margin
+    @margin_top.setter
+    def margin_top(self, margin):
+        self.__margin_top = margin
 
     @property
     def clip(self):

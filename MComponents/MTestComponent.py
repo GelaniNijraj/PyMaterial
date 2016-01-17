@@ -21,7 +21,9 @@ class MTestComponent(MShape):
         self.__reveal = MCircularReveal()
         self.__reveal.duration = 1000
         self.__reveal.add_target(self)
-        self.__bounding_rect = QRect(10, 15, self.width, self.height)
+        self.margin_start = 10
+        self.margin_top = 15
+        self.__bounding_rect = QRect(self.margin_start, self.margin_top, self.width, self.height)
 
     def paintEvent(self, event):
         self.__painter.begin(self)

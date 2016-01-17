@@ -59,8 +59,7 @@ class MFadeOut(MAnimator):
                 # Flag to find out even if one shape is left to complete the
                 # whole fade out animation
                 completed = False
-                shape_counter = 0
-                for s in shapes:
+                for shape_counter, s in enumerate(shapes):
                     if s.opacity > s.min_opacity:
                         # Reducing the opacity by 0.1 if the opacity is not
                         # already below minimum
@@ -69,7 +68,6 @@ class MFadeOut(MAnimator):
                         QApplication.processEvents()
                     else:
                         completed = True
-                    shape_counter += 1
 
                 if completed:
                     # Emitting end signal

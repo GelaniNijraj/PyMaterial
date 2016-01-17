@@ -22,7 +22,7 @@ class MFadeOut(MAnimator):
         # canceled in between
         for s in shapes:
             original_opacity.append(s.opacity)
-            # Uses formula (((start - target) / fps) * (1000 / duration))
+            # Uses formula (((start - target) / fps) * (1000 / duration))x
             reduce_rate.append((s.opacity / self.fps) * (1000 / self.duration))
 
         # Main thread loop

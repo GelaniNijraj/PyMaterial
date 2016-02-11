@@ -12,7 +12,8 @@ class MFade(MAnimator):
     Can be used to set desired opacity of an MShape object.
     (Does not handle children).
     Requires target to be any fractional value between 0 and 1,
-    including 0 and 1
+    including 0 and 1 (0 for complete invisibility and 1 for complete
+    visibility)
     """
     def __init__(self):
         MAnimator.__init__(self)
@@ -102,6 +103,7 @@ class MFade(MAnimator):
 
                 if completed:
                     # Emitting end signal
+                    print("And.... scene!")
                     self.end_signal.emit()
                     self.started = False
                     self.ended = True

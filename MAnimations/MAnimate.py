@@ -8,7 +8,7 @@ from .MCircularReveal import MCircularReveal
 class MAnimate:
     def animate(self):
         """
-        Sets all the possible animation's values to None
+        Initializing all the required variables
         :return: MAnimate
         """
         try:
@@ -21,6 +21,7 @@ class MAnimate:
         # List of classes with respective animations
         self.__animators = {'fade': 'MFade', 'scale': 'MScale', 'reveal': 'MCircularReveal'}
         self.__duration = 1000
+        self.__end_listener = None
         return self
 
     def fade(self, target, duration=0):
@@ -81,6 +82,15 @@ class MAnimate:
         self.__duration = duration
         return self
 
+    def when_ends(self, end_listener):
+        """
+        Function to be executed when animations ends. i.e. end listener
+        :param end_listener:
+        :return:
+        """
+        self.__end_listener = end_listener
+        return self
+
     def start(self):
         for key, value in self.__animations.items():
             if value is not None:
@@ -89,4 +99,6 @@ class MAnimate:
                 value['animator'].duration = value['duration']
                 if value['duration'] == 0:
                     value['animator'].duration = self.__duration
+                if self.__end_listener is not None:
+                    value['animator'].end_signal.connect(self.__end_listener)
                 value['animator'].start()

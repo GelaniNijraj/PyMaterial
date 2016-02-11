@@ -38,7 +38,6 @@ class MScale(MAnimator):
                 ((self.target.x() - s.width) / self.fps) * (1000 / self.duration),
                 ((self.target.y() - s.height) / self.fps) * (1000 / self.duration)
             )
-            print(tmp_point)
             rate_of_change.append(tmp_point)
 
         # Main thread loop

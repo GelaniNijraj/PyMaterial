@@ -2,7 +2,7 @@ __author__ = "MaitreyaBuddha"
 
 import abc
 from threading import Thread
-from PySide.QtCore import Signal, QObject
+from PySide.QtCore import Signal, QObject, QPoint
 
 
 class MAnimator(QObject):
@@ -28,7 +28,13 @@ class MAnimator(QObject):
         # Indicates that the animation is currently running
         self.__running = False
 
+        # Target value for whatever property is being modified
+        self.__target = None
+
         # Indicates that the animation can be run in reverse
+        self.__can_run_reversed = False
+
+        # Indicates that the animation is running reversed
         self.__run_reversed = False
 
         # Indicate that the animation is canceled
@@ -41,7 +47,7 @@ class MAnimator(QObject):
         self.__start_delay = 0
 
         # Stores the duration in which the animation should be completed
-        self.__duration = 0
+        self.__duration = 1000
 
         # Holds the shapes to which animation should be applied
         self.__shapes = []
@@ -197,11 +203,19 @@ class MAnimator(QObject):
 
     @property
     def can_run_reversed(self):
-        return self.__run_reversed
+        return self.__can_run_reversed
 
     @can_run_reversed.setter
     def can_run_reversed(self, can):
-        self.__run_reversed = can
+        self.__can_run_reversed = can
+
+    @property
+    def run_reversed(self):
+        return self.__run_reversed
+
+    @run_reversed.setter
+    def run_reversed(self, run):
+        self.__run_reversed = run
 
     @property
     def fps(self):
@@ -210,3 +224,11 @@ class MAnimator(QObject):
     @fps.setter
     def fps(self, fps):
         self.__fps = fps
+
+    @property
+    def target(self):
+        return self.__target
+
+    @target.setter
+    def target(self, target):
+        self.__target = target

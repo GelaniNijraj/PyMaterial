@@ -3,9 +3,11 @@ __author__ = 'Samvid Mistry'
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-from MAnimations.MCircularReveal import MCircularReveal
+from MAnimations.MScale import MScale
+from MAnimations.MFade import MFade
 from MComponents.MShape import MShape
 from MUtilities import MColors
+from MUtilities.MRipple import MRipple
 
 
 class MTestComponent(MShape):
@@ -18,25 +20,36 @@ class MTestComponent(MShape):
         self.__color = MColors.PRIMARY_COLOR
         self.__pen = QPen(self.__color, 0)
         self.__painter = QPainter()
-        self.__reveal = MCircularReveal()
-        self.__reveal.duration = 1000
-        self.__reveal.add_target(self)
-        self.margin_start = 10
+        # self.__reveal = MCircularReveal()
+        # self.__reveal.duration = 1000
+        # self.__reveal.add_target(self)
+        self.__ripple = MRipple()
+        self.add_layout_item(self.__ripple, 0, 0)
+        self.margin_left = 10
         self.margin_top = 15
-        self.__bounding_rect = QRect(self.margin_start, self.margin_top, self.width, self.height)
+        self.setLayout(self.layout)
+        self.__scale = MFade()
+        self.__scale.add_target(self)
+        self.__bounding_rect = QRect(self.margin_left, self.margin_top, self.width, self.height)
 
     def paintEvent(self, event):
         self.__painter.begin(self)
         self.__painter.setRenderHint(QPainter.Antialiasing)
+        self.__painter.setOpacity(self.opacity)
         self.__painter.setPen(self.__pen)
         self.__painter.setBrush(self.__color)
         if self.clip is not None:
             self.__painter.setClipPath(self.clip)
-        self.__painter.drawRect(self.__bounding_rect)
+        self.__painter.drawRect(QRect(self.x + self.margin_left, self.y + self.margin_top, self.width, self.height))
         self.__painter.end()
 
     def mousePressEvent(self, event):
-        self.__reveal.start()
+        self.__ripple.handle_click_events(event)
+
+    def mouseReleaseEvent(self, event):
+        self.__ripple.handle_release_events(event)
+
 
     def trigger_cancel(self):
-        self.__reveal.cancel()
+        self.__scale.target = 0
+        self.__scale.start()

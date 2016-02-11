@@ -3,8 +3,10 @@ __author__ = 'MaitreyaBuddha'
 from PySide.QtGui import QWidget, QGridLayout, QApplication
 from PySide.QtCore import QMargins
 
+from MAnimations.MAnimate import MAnimate
 
-class MShape(QWidget):
+
+class MShape(QWidget, MAnimate):
     def __init__(self):
         QWidget.__init__(self)
         self.__x = 0
@@ -19,7 +21,7 @@ class MShape(QWidget):
         self.__min_height = 0
         self.__max_opacity = 1.0
         self.__min_opacity = 0.0
-        self.__margin_start = 0
+        self.__margin_left = 0
         self.__margin_top = 0
         self.__padding_x = 0
         self.__padding_y = 0
@@ -40,6 +42,22 @@ class MShape(QWidget):
         self.__children.remove(shape)
         shape.deleteLater()
         self.update()
+
+    @property
+    def x(self):
+        return self.__x
+
+    @x.setter
+    def x(self, x):
+        self.__x = x
+
+    @property
+    def y(self):
+        return self.__y
+
+    @y.setter
+    def y(self, y):
+        self.__y = y
 
     @property
     def layout(self):
@@ -128,12 +146,12 @@ class MShape(QWidget):
         self.__max_opacity = opacity
 
     @property
-    def margin_start(self):
-        return self.__margin_start
+    def margin_left(self):
+        return self.__margin_left
 
-    @margin_start.setter
-    def margin_start(self, margin):
-        self.__margin_start = margin
+    @margin_left.setter
+    def margin_left(self, margin):
+        self.__margin_left = margin
 
     @property
     def margin_top(self):

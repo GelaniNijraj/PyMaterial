@@ -2,6 +2,7 @@ __author__ = "MaitreyaBuddha"
 
 import abc
 from threading import Thread
+
 from PySide.QtCore import Signal, QObject, QPoint
 
 

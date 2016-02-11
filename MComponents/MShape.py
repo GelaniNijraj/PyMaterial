@@ -15,6 +15,7 @@ class MShape(QWidget, MAnimate):
         self.__height = 0
         self.__opacity = 1.0
         self.__clip = None
+        self.__parent_clip = None
         self.__max_width = 0
         self.__max_height = 0
         self.__min_width = 0
@@ -168,3 +169,11 @@ class MShape(QWidget, MAnimate):
     @clip.setter
     def clip(self, value):
         self.__clip = value
+
+    @property
+    def parent_clip(self):
+        return self.__parent_clip
+
+    @parent_clip.setter
+    def parent_clip(self, value):
+        self.__parent_clip = value

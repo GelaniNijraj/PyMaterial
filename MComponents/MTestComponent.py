@@ -8,6 +8,7 @@ from MAnimations.MFade import MFade
 from MComponents.MShape import MShape
 from MUtilities import MColors
 from MUtilities.MRipple import MRipple
+from MComponents.MRadioButton import MRadioButton
 
 
 class MTestComponent(MShape):
@@ -23,12 +24,22 @@ class MTestComponent(MShape):
         # self.__reveal = MCircularReveal()
         # self.__reveal.duration = 1000
         # self.__reveal.add_target(self)
+
+        self.radio = MRadioButton()
+        self.add_layout_item(self.radio, 0, 0)
+
         self.__ripple = MRipple()
         self.add_layout_item(self.__ripple, 0, 0)
         self.margin_left = 10
         self.margin_top = 15
         self.setLayout(self.layout)
         self.__scale = MFade()
+        path = QPainterPath()
+        path.addEllipse(0, 0, 100, 100)
+        self.clip = path
+        newpath = QPainterPath()
+        newpath.addEllipse(20, 20, 100, 100)
+        self.nonepath = newpath
         self.__scale.add_target(self)
         self.__bounding_rect = QRect(self.margin_left, self.margin_top, self.width, self.height)
 
@@ -38,8 +49,10 @@ class MTestComponent(MShape):
         self.__painter.setOpacity(self.opacity)
         self.__painter.setPen(self.__pen)
         self.__painter.setBrush(self.__color)
-        if self.clip is not None:
-            self.__painter.setClipPath(self.clip)
+        # if self.clip is not None:
+        self.__painter.setClipPath(self.clip)
+        self.__painter.drawRect(QRect(self.x + self.margin_left, self.y + self.margin_top, self.width, self.height))
+        self.__painter.setClipPath(self.nonepath)
         self.__painter.drawRect(QRect(self.x + self.margin_left, self.y + self.margin_top, self.width, self.height))
         self.__painter.end()
 

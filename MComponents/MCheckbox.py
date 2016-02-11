@@ -8,7 +8,7 @@ from MUtilities import MColors
 from MAnimations.MCircularReveal import MCircularReveal
 from MAnimations.MFade import MFadeOut
 
-
+# TODO: Change according to the new MFade
 class CheckboxBorder(MShape):
     def __init__(self):
         MShape.__init__(self)

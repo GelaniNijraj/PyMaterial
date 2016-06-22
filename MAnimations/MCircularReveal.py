@@ -1,3 +1,5 @@
+from math import sqrt
+
 __author__ = "Samvid Mistry"
 
 import time
@@ -30,7 +32,10 @@ class MCircularReveal(MAnimate):
             if self.target.startswith("show"):
                 # Setting max of width or height as radius, ergo "circular" reveal,
                 # not "oval" reveal
-                target = max(s.width, s.height)
+                side = max(s.width, s.height)
+                side_square = side * side
+                # Applying pythagoras theorem
+                target = sqrt(side_square + side_square)
                 # Starting from the zero reaching the max
                 animating_radius.append(0)
                 rate_of_change.append((target / self.fps) * (1000 / self.duration))
@@ -43,7 +48,7 @@ class MCircularReveal(MAnimate):
             else:
                 raise ValueError("Target should be either 'reveal' or 'hide'")
             target_radius.append(target)
-            # Getting the original masks; Used in case of cancelation
+            # Getting the original masks; Used in case of cancellation
             original_clips.append(s.clip)
             # Center of the shape, considering margin
             centers.append(QPoint((s.width / 2) + s.margin_left, (s.height / 2) + s.margin_top))
@@ -78,7 +83,9 @@ class MCircularReveal(MAnimate):
                         if not animating_radius[i] < target_radius[i]:
                             completed = True
                     else:
-                        if not animating_radius[i] > target_radius[i]:
+                        # TODO: leaves 1 pixel visible in hiding the check,
+                        # added 1 to overall radius checking for now, look into this issue
+                        if not animating_radius[i] > target_radius[i] + 1:
                             completed = True
                     if not completed:
                         animating_radius[i] += rate_of_change[i]

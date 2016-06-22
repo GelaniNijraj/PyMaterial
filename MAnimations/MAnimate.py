@@ -7,8 +7,6 @@ from PySide.QtCore import Signal, QObject, QPoint
 
 
 class MAnimate(QObject):
-    __metaclass__ = abc.ABCMeta
-
     # Various signals which will be emitted from inside the animate function
     # in the subclass
     start_signal = Signal()
@@ -19,7 +17,6 @@ class MAnimate(QObject):
 
     def __init__(self):
         QObject.__init__(self)
-
         # Indicates that the animation is paused in between
         self.__paused = False
 
@@ -56,7 +53,7 @@ class MAnimate(QObject):
         # Framerate of the animation
         self.__fps = 60
 
-    def start(self, thread):
+    def start(self):
         """
         This method is called by the user to start the animation on a shape
         after setting the delay. It starts the thread of animate() function
@@ -64,7 +61,8 @@ class MAnimate(QObject):
         :return: None
         """
         self.started = True
-        thread.add_method(self.animate, self.__shapes)
+        t = Thread(target=self.animate, args=(self.__shapes,))
+        t.start()
 
     @abc.abstractmethod
     def animate(self, shape):

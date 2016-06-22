@@ -5,10 +5,10 @@ import time
 from PySide.QtGui import QApplication
 from PySide.QtCore import QPoint, QPointF
 
-from MAnimations.MAnimator import MAnimator
+from MAnimations.MAnimate import MAnimate
 
 
-class MScale(MAnimator):
+class MScale(MAnimate):
     """
     Can be used to scale an MShape object to desired size.
     (Does not handle children).
@@ -16,7 +16,7 @@ class MScale(MAnimator):
     width and QPoint.y() is target height.
     """
     def __init__(self):
-        MAnimator.__init__(self)
+        MAnimate.__init__(self)
         self.can_run_reversed = True
 
     def animate(self, shapes):

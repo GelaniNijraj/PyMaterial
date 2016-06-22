@@ -1,19 +1,19 @@
 __author__ = "Samvid Mistry"
 
 import time
-from MAnimations.MAnimator import MAnimator
+from MAnimations.MAnimate import MAnimate
 from PySide.QtGui import QApplication, QPainterPath
 from PySide.QtCore import QPoint, QPointF
 
 
-class MCircularReveal(MAnimator):
+class MCircularReveal(MAnimate):
     """
     Can be used to perform circular reveal or circular hide animation
     on an MShape object.
     Requires self.target to be either 'show[_circle]' or 'hide[_circle]'
     """
     def __init__(self):
-        MAnimator.__init__(self)
+        MAnimate.__init__(self)
         self.__clip = QPainterPath()
 
     def animate(self, shapes):
@@ -63,9 +63,7 @@ class MCircularReveal(MAnimator):
                 while self.paused:
                     # If you want the current state, pause the
                     # animation and then cancel it
-                    print("paused")
                     if self.canceled:
-                        print("canceled")
                         self.ended = True
                         self.started = False
                         self.cancel_signal.emit()

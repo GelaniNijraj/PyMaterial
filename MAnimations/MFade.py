@@ -4,10 +4,10 @@ import time
 
 from PySide.QtGui import QApplication
 
-from MAnimations.MAnimator import MAnimator
+from MAnimations.MAnimate import MAnimate
+from MBase.MValueAnimator import MValueAnimator
 
-
-class MFade(MAnimator):
+class MFade(MAnimate):
     """
     Can be used to set desired opacity of an MShape object.
     (Does not handle children).
@@ -16,16 +16,16 @@ class MFade(MAnimator):
     visibility)
     """
     def __init__(self):
-        MAnimator.__init__(self)
+        MAnimate.__init__(self)
         self.can_run_reversed = True
 
     def animate(self, shapes):
         self.start_signal.emit()
         # Sleeping to account the start_delay
-        print(self.target)
         time.sleep(self.start_delay)
         self.running = True
         self.ended = False
+        value_animators = []
         # Used to store the original opacities of the shapes
         original_opacity = []
         # Used to store opacity to be reduced bu each frame
@@ -33,12 +33,9 @@ class MFade(MAnimator):
         # Getting the original opacities of shapes in case the animation is
         # canceled in between
         for s in shapes:
-            original_opacity.append(s.opacity)
-            # Uses formula (((start - target) / fps) * (1000 / duration))
-            rate_of_change.append(
-                ((self.target - s.opacity) / self.fps) *
-                (1000 / self.duration)
-            )
+            # print("target is", self.target)
+            value_animators.append(MValueAnimator(s.opacity, self.target, self.duration, self.fps))
+
 
         # Main thread loop
         while self.running or self.paused:
@@ -46,7 +43,8 @@ class MFade(MAnimator):
                 # Restoring the opacity to the original in case the animation
                 # was canceled
                 for i, s in enumerate(shapes):
-                    s.opacity = original_opacity[i]
+                    s.opacity = value_animators[i].get_original_value()
+                    s.fading = False
                 # Emitting cancel signal
                 self.cancel_signal.emit()
                 return
@@ -54,6 +52,7 @@ class MFade(MAnimator):
                 # Setting the opacity to the final value, i.e. target
                 # in case if the animation was ended
                 for s in shapes:
+                    s.fading = False
                     s.opacity = self.target
                 # Emitting end signal
                 self.end_signal.emit()
@@ -70,40 +69,29 @@ class MFade(MAnimator):
                         self.ended = True
                         self.started = False
                         self.cancel_signal.emit()
+                        for s in shapes:
+                            s.fading = False
                         return
                 # Emitting resume signal
                 self.resume_signal.emit()
             else:
-                # Sleeping for 1/60 seconds, for 60fps
-                time.sleep(1 / self.fps)
                 # Flag to find out even if one shape is left to complete the
                 # whole fade out animation
                 completed = False
                 for shape_counter, s in enumerate(shapes):
-                    if rate_of_change[shape_counter] > 0:
-                        if s.opacity < self.target:
-                            s.opacity = \
-                                float(
-                                    "%.6f" %
-                                    (s.opacity + rate_of_change[shape_counter])
-                                )
-                        else:
-                            completed = True
-                    else:
-                        if s.opacity > self.target:
-                            s.opacity = \
-                                float(
-                                    "%.6f" %
-                                    (s.opacity + rate_of_change[shape_counter])
-                                )
-                        else:
-                            completed = True
+                    try:
+                        s.opacity = value_animators[shape_counter].step()
+                    except OverflowError:
+                        print("we're done, bruh")
+                        completed = True
+                        break
                     s.update()
                     QApplication.processEvents()
 
                 if completed:
                     # Emitting end signal
-                    print("And.... scene!")
+                    for s in shapes:
+                        s.fading = False
                     self.end_signal.emit()
                     self.started = False
                     self.ended = True

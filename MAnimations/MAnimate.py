@@ -1,104 +1,234 @@
-__author__ = 'MaitreyaBuddha'
+__author__ = "MaitreyaBuddha"
 
-from .MFade import MFade
-from .MScale import MScale
-from .MCircularReveal import MCircularReveal
+import abc
+from threading import Thread
+
+from PySide.QtCore import Signal, QObject, QPoint
 
 
-class MAnimate:
-    def animate(self):
+class MAnimate(QObject):
+    __metaclass__ = abc.ABCMeta
+
+    # Various signals which will be emitted from inside the animate function
+    # in the subclass
+    start_signal = Signal()
+    pause_signal = Signal()
+    end_signal = Signal()
+    resume_signal = Signal()
+    cancel_signal = Signal()
+
+    def __init__(self):
+        QObject.__init__(self)
+
+        # Indicates that the animation is paused in between
+        self.__paused = False
+
+        # Indicates that the animation have been started
+        self.__started = False
+
+        # Indicates that the animation is currently running
+        self.__running = False
+
+        # Target value for whatever property is being modified
+        self.__target = None
+
+        # Indicates that the animation can be run in reverse
+        self.__can_run_reversed = False
+
+        # Indicates that the animation is running reversed
+        self.__run_reversed = False
+
+        # Indicate that the animation is canceled
+        self.__cancel = False
+
+        # Indicates that the animation is ended
+        self.__end = False
+
+        # Stores the start delay of the animation in seconds
+        self.__start_delay = 0
+
+        # Stores the duration in which the animation should be completed
+        self.__duration = 1000
+
+        # Holds the shapes to which animation should be applied
+        self.__shapes = []
+
+        # Framerate of the animation
+        self.__fps = 60
+
+    def start(self, thread):
         """
-        Initializing all the required variables
-        :return: MAnimate
+        This method is called by the user to start the animation on a shape
+        after setting the delay. It starts the thread of animate() function
+        and passes the list of shapes as an argument.
+        :return: None
+        """
+        self.started = True
+        thread.add_method(self.animate, self.__shapes)
+
+    @abc.abstractmethod
+    def animate(self, shape):
+        """
+        This method must contain the core animation logic and should also
+        emit appropriate signals at appropriate point in the execution
+        in the overridden method.
+        :param shape: list
+        :return: None
+        """
+        raise NotImplementedError
+
+    def cancel(self):
+        """
+        This method sets the __cancel flag to True. Canceling the animation
+        includes setting the values of the shape to the values which were set
+        before the animation started.
+        This flag should be continuously checked and appropriate action must
+        be taken inside the animate().
+        :return: None
+        """
+        self.canceled = True
+
+    def end(self):
+        """
+        This method sets the __end flag to True. Ending the animation includes
+        setting the values of the shape to the final values which would have
+        been there if animation was completed successfully.
+        This flag should be continuously checked and appropriate action must
+        be taken inside the animate().
+        :return: None
+        """
+        self.ended = True
+
+    def pause(self):
+        """
+        This method sets the the __paused flag to True(pauses the animation)
+        if it's not already paused and is running.
+        This flag should be continuously checked and appropriate action must
+        be taken inside the animate().
+        :return: None
+        """
+        if self.running and not self.paused:
+            self.paused = True
+
+    def resume(self):
+        """
+        This method sets the __paused flag to False(resumes the animation)
+        if it is paused.
+        :return: None
+        """
+        if self.__paused:
+            self.__paused = False
+
+    def add_target(self, shape):
+        """
+        This method adds a target MShape object to the __shapes list which
+        is passed to the animate() thread.
+        Each shape in __shapes should be processed and updated individually.
+        :param shape: MShape : The shape on which animation is to be done.
+        :return: None
+        """
+        self.__shapes.append(shape)
+
+    def remove_target(self, shape):
+        """
+        This method removes the specified shape from the __shapes list.
+        :param shape: MShape : Shape to be removed from the __shapes list.
+        :return: bool : Whether or not the shape was found or not.
         """
         try:
-            # Check if animations is already declared
-            if self.__animations is None:
-                pass
-        except AttributeError:
-            # If not, initialize all known animations to None
-            self.__animations = {'fade': None, 'scale': None, 'reveal': None}
-        # List of classes with respective animations
-        self.__animators = {'fade': 'MFade', 'scale': 'MScale', 'reveal': 'MCircularReveal'}
-        self.__duration = 1000
-        self.__end_listener = None
-        return self
+            self.__shapes.remove(shape)
+            return True
+        except ValueError:
+            return False
 
-    def fade(self, target, duration=0):
-        animator_name = 'fade'
-        # Check if there is any ongoing animation
-        if self.__animations[animator_name] is not None:
-            # then cancel that animation while saving the state
-            self.__animations[animator_name]['animator'].paused = True
-            self.__animations[animator_name]['animator'].canceled = True
-            # Resetting the animation
-            self.__animations[animator_name] = None
-        # Now worry about the current animation
-        # Building the animation dictionary
-        self.__animations[animator_name] = {
-            'target': target,
-            'duration': duration,
-            'animator': MFade()
-        }
-        return self
+    @property
+    def started(self):
+        """
 
-    def scale(self, target, duration=0):
-        animator_name = 'scale'
-        # Check if there is any ongoing animation
-        if self.__animations[animator_name] is not None:
-            # then cancel that animation while saving the state
-            self.__animations[animator_name]['animator'].paused = True
-            self.__animations[animator_name]['animator'].canceled = True
-            # Resetting the animation
-            self.__animations[animator_name] = None
-        # Now worry about the current animation
-        # Building the animation dictionary
-        self.__animations[animator_name] = {
-            'target': target,
-            'duration': duration,
-            'animator': MScale()
-        }
-        return self
+        :return: bool
+        """
+        return self.__started
 
-    def reveal(self, target, duration=0):
-        animator_name = 'reveal'
-        # Check if there is any ongoing animation
-        if self.__animations[animator_name] is not None:
-            # then cancel that animation while saving the state
-            self.__animations[animator_name]['animator'].pause()
-            self.__animations[animator_name]['animator'].cancel()
-            # Resetting the animation
-            self.__animations[animator_name] = None
-        # Now worry about the current animation
-        # Building the animation dictionary
-        self.__animations[animator_name] = {
-            'target': target,
-            'duration': duration,
-            'animator': MCircularReveal()
-        }
-        return self
+    @started.setter
+    def started(self, started):
+        self.__started = started
 
+    @property
+    def canceled(self):
+        return self.__cancel
+
+    @canceled.setter
+    def canceled(self, cancel):
+        self.__cancel = cancel
+
+    @property
+    def ended(self):
+        return self.__end
+
+    @ended.setter
+    def ended(self, end):
+        self.__end = end
+
+    @property
+    def paused(self):
+        return self.__paused
+
+    @paused.setter
+    def paused(self, paused):
+        self.__paused = paused
+
+    @property
+    def duration(self):
+        return self.__duration
+
+    @duration.setter
     def duration(self, duration):
         self.__duration = duration
-        return self
 
-    def when_ends(self, end_listener):
-        """
-        Function to be executed when animations ends. i.e. end listener
-        :param end_listener:
-        :return:
-        """
-        self.__end_listener = end_listener
-        return self
+    @property
+    def running(self):
+        return self.__running
 
-    def start(self):
-        for key, value in self.__animations.items():
-            if value is not None:
-                value['animator'].add_target(self)
-                value['animator'].target = value['target']
-                value['animator'].duration = value['duration']
-                if value['duration'] == 0:
-                    value['animator'].duration = self.__duration
-                if self.__end_listener is not None:
-                    value['animator'].end_signal.connect(self.__end_listener)
-                value['animator'].start()
+    @running.setter
+    def running(self, is_it):
+        self.__running = is_it
+
+    @property
+    def start_delay(self):
+        return self.__start_delay
+
+    @start_delay.setter
+    def start_delay(self, delay):
+        self.__start_delay = delay / 1000
+
+    @property
+    def can_run_reversed(self):
+        return self.__can_run_reversed
+
+    @can_run_reversed.setter
+    def can_run_reversed(self, can):
+        self.__can_run_reversed = can
+
+    @property
+    def run_reversed(self):
+        return self.__run_reversed
+
+    @run_reversed.setter
+    def run_reversed(self, run):
+        self.__run_reversed = run
+
+    @property
+    def fps(self):
+        return self.__fps
+
+    @fps.setter
+    def fps(self, fps):
+        self.__fps = fps
+
+    @property
+    def target(self):
+        return self.__target
+
+    @target.setter
+    def target(self, target):
+        self.__target = target

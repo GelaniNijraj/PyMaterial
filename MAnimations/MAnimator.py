@@ -7,8 +7,6 @@ from PySide.QtCore import Signal, QObject, QPoint
 
 
 class MAnimator(QObject):
-    __metaclass__ = abc.ABCMeta
-
     # Various signals which will be emitted from inside the animate function
     # in the subclass
     start_signal = Signal()
@@ -19,7 +17,6 @@ class MAnimator(QObject):
 
     def __init__(self):
         QObject.__init__(self)
-
         # Indicates that the animation is paused in between
         self.__paused = False
 

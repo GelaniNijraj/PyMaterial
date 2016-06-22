@@ -64,6 +64,7 @@ class InnerCircle(MShape):
         painter.end()
 
 
+# TODO: extend it with TwoStateShape?
 class MRadioButton(MShape):
     def __init__(self):
         MShape.__init__(self)

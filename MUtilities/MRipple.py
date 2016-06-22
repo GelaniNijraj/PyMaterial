@@ -24,7 +24,6 @@ class MRippleShape(MShape):
         self.height = 0
         self.width = 0
         self.opacity = 1
-        self.update()
 
     def paintEvent(self, event):
         self.__painter.begin(self)
@@ -58,11 +57,12 @@ class MRipple(MShape):
         if not isinstance(event, QMouseEvent):
             raise ValueError("event must be an instance of QMouseEvent")
         mouse_position = event.pos()
+        self.__ripple.reset()
         self.__ripple.x = mouse_position.x()
         self.__ripple.y = mouse_position.y()
-        self.__ripple.update()
+        # self.__ripple.reset()
         self.__ripple.animate().scale(QPoint(100, 100)).duration(200).start()
         QApplication.processEvents()
 
     def handle_release_events(self, event):
-        self.__ripple.animate().fade(0).duration(3000).when_ends(self.__ripple.reset).start()
+        self.__ripple.animate().fade(0).duration(300).start()

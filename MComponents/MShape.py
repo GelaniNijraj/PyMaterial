@@ -3,10 +3,10 @@ __author__ = 'MaitreyaBuddha'
 from PySide.QtGui import QWidget, QGridLayout, QApplication
 from PySide.QtCore import QMargins
 
-from MAnimations.MAnimate import MAnimate
+from MAnimations.MAnimator import MAnimator
 
 
-class MShape(QWidget, MAnimate):
+class MShape(QWidget, MAnimator):
     def __init__(self):
         QWidget.__init__(self)
         self.__x = 0
@@ -26,6 +26,7 @@ class MShape(QWidget, MAnimate):
         self.__margin_top = 0
         self.__padding_x = 0
         self.__padding_y = 0
+        self.__fading = False
         # Defining the layout which will hold the child shapes of the widget
         self.__layout = QGridLayout()
         self.__layout.setVerticalSpacing(0)
@@ -177,3 +178,11 @@ class MShape(QWidget, MAnimate):
     @parent_clip.setter
     def parent_clip(self, value):
         self.__parent_clip = value
+
+    @property
+    def fading(self):
+        return self.__fading
+
+    @fading.setter
+    def fading(self, is_fading):
+        self.__fading = is_fading

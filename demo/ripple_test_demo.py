@@ -4,6 +4,7 @@ import sys
 from PySide.QtGui import *
 from PySide.QtCore import *
 from MUtilities import MColors
+from MBase.MAnimationThread import MAnimationThread
 from MComponents.MTestComponent import MTestComponent
 
 
@@ -27,12 +28,15 @@ class MainWindow(QWidget):
         self.setLayout(layout)
 
     def start_animation(self):
-        self.test1.animate().duration(5000).reveal("show").start()
+        self.test1.animate().duration(1000).reveal("show").start()
+
+thread = MAnimationThread()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = MainWindow()
     win.show()
     win.addComponents()
+    thread.start()
     app.exec_()
     sys.exit()

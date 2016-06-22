@@ -21,12 +21,6 @@ class MTestComponent(MShape):
         self.__color = MColors.PRIMARY_COLOR
         self.__pen = QPen(self.__color, 0)
         self.__painter = QPainter()
-        # self.__reveal = MCircularReveal()
-        # self.__reveal.duration = 1000
-        # self.__reveal.add_target(self)
-
-        self.radio = MRadioButton()
-        self.add_layout_item(self.radio, 0, 0)
 
         self.__ripple = MRipple()
         self.add_layout_item(self.__ripple, 0, 0)
@@ -35,11 +29,8 @@ class MTestComponent(MShape):
         self.setLayout(self.layout)
         self.__scale = MFade()
         path = QPainterPath()
-        path.addEllipse(0, 0, 100, 100)
+        path.addRect(0, 0, 100, 100)
         self.clip = path
-        newpath = QPainterPath()
-        newpath.addEllipse(20, 20, 100, 100)
-        self.nonepath = newpath
         self.__scale.add_target(self)
         self.__bounding_rect = QRect(self.margin_left, self.margin_top, self.width, self.height)
 
@@ -50,9 +41,6 @@ class MTestComponent(MShape):
         self.__painter.setPen(self.__pen)
         self.__painter.setBrush(self.__color)
         # if self.clip is not None:
-        self.__painter.setClipPath(self.clip)
-        self.__painter.drawRect(QRect(self.x + self.margin_left, self.y + self.margin_top, self.width, self.height))
-        self.__painter.setClipPath(self.nonepath)
         self.__painter.drawRect(QRect(self.x + self.margin_left, self.y + self.margin_top, self.width, self.height))
         self.__painter.end()
 
@@ -61,7 +49,6 @@ class MTestComponent(MShape):
 
     def mouseReleaseEvent(self, event):
         self.__ripple.handle_release_events(event)
-
 
     def trigger_cancel(self):
         self.__scale.target = 0

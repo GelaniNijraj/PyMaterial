@@ -53,7 +53,7 @@ class MAnimate(QObject):
         # Framerate of the animation
         self.__fps = 60
 
-    def start(self):
+    def start(self, animation_thread):
         """
         This method is called by the user to start the animation on a shape
         after setting the delay. It starts the thread of animate() function
@@ -61,8 +61,7 @@ class MAnimate(QObject):
         :return: None
         """
         self.started = True
-        t = Thread(target=self.animate, args=(self.__shapes,))
-        t.start()
+        animation_thread.add_method(self.animate, self.__shapes)
 
     @abc.abstractmethod
     def animate(self, shape):

@@ -1,11 +1,10 @@
-__author__ = 'MaitreyaBuddha'
-
 import time
 
 from PySide.QtGui import QApplication
 
 from MAnimations.MAnimate import MAnimate
-from MBase.MValueAnimator import MValueAnimator
+from MBase import *
+
 
 class MFade(MAnimate):
     """
@@ -81,7 +80,7 @@ class MFade(MAnimate):
                 for shape_counter, s in enumerate(shapes):
                     try:
                         s.opacity = value_animators[shape_counter].step()
-                    except OverflowError:
+                    except MFinalValueReachedException:
                         print("we're done, bruh")
                         completed = True
                         break

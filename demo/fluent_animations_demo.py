@@ -1,5 +1,3 @@
-__author__ = "MaitreyaBuddha"
-
 import sys
 
 from PySide.QtGui import *

@@ -25,58 +25,22 @@ class MAnimator:
         return self
 
     def fade(self, target, duration=0):
-        animator_name = 'fade'
-        self.__to_animate[animator_name] = {
+        animation_name = 'fade'
+        self.__to_animate[animation_name] = {
             'target': target,
             'duration': duration,
             'animator': MFade()
         }
 
-        # # Check if there is any ongoing animation
-        # if self.__animations[animator_name] is not None:
-        #     # then cancel that animation while saving the state
-        #     self.__animations[animator_name]['animator'].paused = True
-        #     self.__animations[animator_name]['animator'].canceled = True
-        #     # Resetting the animation
-        #     self.__animations[animator_name] = None
-        # # Now worry about the current animation
-        # # Building the animation dictionary
-        return self
-
-    def scale(self, target, duration=0):
-        animator_name = 'scale'
         # Check if there is any ongoing animation
-        if self.__animations[animator_name] is not None:
+        if self.__animations[animation_name] is not None:
             # then cancel that animation while saving the state
-            self.__animations[animator_name]['animator'].paused = True
-            self.__animations[animator_name]['animator'].canceled = True
+            self.__animations[animation_name]['animator'].paused = True
+            self.__animations[animation_name]['animator'].canceled = True
             # Resetting the animation
-            self.__animations[animator_name] = None
+            self.__animations[animation_name] = None
         # Now worry about the current animation
         # Building the animation dictionary
-        self.__animations[animator_name] = {
-            'target': target,
-            'duration': duration,
-            'animator': MScale()
-        }
-        return self
-
-    def reveal(self, target, duration=0):
-        animator_name = 'reveal'
-        # Check if there is any ongoing animation
-        if self.__animations[animator_name] is not None:
-            # then cancel that animation while saving the state
-            self.__animations[animator_name]['animator'].pause()
-            self.__animations[animator_name]['animator'].cancel()
-            # Resetting the animation
-            self.__animations[animator_name] = None
-        # Now worry about the current animation
-        # Building the animation dictionary
-        self.__animations[animator_name] = {
-            'target': target,
-            'duration': duration,
-            'animator': MCircularReveal()
-        }
         return self
 
     def duration(self, duration):
@@ -94,7 +58,6 @@ class MAnimator:
 
     def start(self):
         for animation, parmas in self.__to_animate.items():
-            print("poop", animation, parmas)
             if parmas is not None:
                 if self.__animations[animation] is not None:
                     print("already exists so canceling")

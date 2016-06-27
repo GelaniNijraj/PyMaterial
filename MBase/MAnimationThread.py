@@ -39,7 +39,10 @@ class MAnimationThread(QThread):
                 try:
                     return_val = method(*self.__args[i])
                 except TypeError:
-                    return_val = method(self.__args[i])
+                    try:
+                        return_val = method(self.__args[i])
+                    except TypeError:
+                        return_val = method()
                 if return_val is False:
                     cleanup_indices.append(i)
 

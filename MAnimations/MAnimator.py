@@ -4,6 +4,11 @@ from .MFade import MFade
 from .MScale import MScale
 from .MCircularReveal import MCircularReveal
 
+from MBase import *
+
+animation_thread = MAnimationThread()
+animation_thread.start()
+
 
 class MAnimator:
     def animate(self):
@@ -61,11 +66,11 @@ class MAnimator:
             if parmas is not None:
                 if self.__animations[animation] is not None:
                     print("already exists so canceling")
-                    # canceling at the current state if there is an ongoing animation
+                    # canceling at the current state if there is an
+                    # ongoing animation
                     self.__animations[animation]['animator'].pause()
                     self.__animations[animation]['animator'].cancel()
-                # setting up the duration and target
-                print("parmas are", parmas)
+                # setting up the duration and target)
                 parmas['animator'].target = parmas['target']
                 if parmas['duration'] != 0:
                     parmas['animator'].duration = parmas['duration']
@@ -75,4 +80,4 @@ class MAnimator:
                 self.__animations[animation] = parmas
                 # finally, starting that shit
                 parmas['animator'].add_target(self)
-                parmas['animator'].start()
+                parmas['animator'].start(animation_thread)

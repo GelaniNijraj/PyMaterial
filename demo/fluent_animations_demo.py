@@ -79,10 +79,10 @@ class MainWindow(QWidget):
         self.setLayout(layout)
 
     def fade_in(self):
-        self.__box.animate().fade(1).duration(1000).start()
+        self.__box.animate().fade(1).duration(5000).start()
 
     def fade_out(self):
-        self.__box.animate().fade(0).duration(1000).start()
+        self.__box.animate().fade(0).duration(5000).start()
 
     def scale_in(self):
         self.__box.animate().scale(QPoint(200, 200)).duration(1000).start()

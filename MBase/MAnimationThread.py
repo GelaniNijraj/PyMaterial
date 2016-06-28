@@ -12,6 +12,7 @@ class MAnimationThread(QThread):
         QThread.__init__(self)
         self.__methods = []
         self.__args = []
+        self.__frame = 1
 
     def add_method(self, method, args=None):
         """
@@ -36,13 +37,14 @@ class MAnimationThread(QThread):
             time.sleep(1/60)
             cleanup_indices = []
             for i, method in enumerate(self.__methods):
-                try:
-                    return_val = method(*self.__args[i])
-                except TypeError:
-                    try:
-                        return_val = method(self.__args[i])
-                    except TypeError:
-                        return_val = method()
+                return_val = method(self.__args[i])
+                # try:
+                #     return_val = method(*self.__args[i])
+                # except TypeError:
+                #     try:
+                #         return_val = method(self.__args[i])
+                #     except TypeError:
+                #         return_val = method()
                 if return_val is False:
                     cleanup_indices.append(i)
 

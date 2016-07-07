@@ -1,5 +1,6 @@
 from MBase.MFinalValueReachedException import MFinalValueReachedException
 
+
 class MValueAnimator:
     """
     A class to animate single integer or float values. It would also

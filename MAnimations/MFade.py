@@ -66,31 +66,34 @@ class MFade(MAnimate):
                 self.pause_signal.emit()
                 # Loop which will hold the thread until the animation is
                 # paused
-                if not self.paused:
-                    # If you want the current state, pause the
-                    # animation and then cancel it
-                    if self.canceled:
-                        self.ended = True
-                        self.started = False
-                        self.cancel_signal.emit()
-                        for s in shapes:
-                            s.fading = False
-                        return
+                # If you want the current state, pause the
+                # animation and then cancel it
+                if self.canceled:
+                    self.ended = True
+                    self.started = False
+                    self.cancel_signal.emit()
+                    for s in shapes:
+                        s.fading = False
+                    return
                 # Emitting resume signal
                 self.resume_signal.emit()
             else:
                 # Flag to find out even if one shape is left to complete the
                 # whole fade out animation
-                completed = False
-                for shape_counter, s in enumerate(shapes):
-                    try:
-                        s.opacity = self.value_animators[shape_counter].step()
-                    except MFinalValueReachedException:
-                        print("we're done, bruh")
-                        completed = True
-                        break
-                    s.update()
-                    QApplication.processEvents()
+                if self.stop_whatever_you_are_doing_and_cancel_the_animation_right_there is False:
+                    completed = False
+                    for shape_counter, s in enumerate(shapes):
+                        try:
+                            s.opacity = self.value_animators[shape_counter].step()
+                        except MFinalValueReachedException:
+                            print("we're done, bruh")
+                            completed = True
+                            break
+                        s.update()
+                        QApplication.processEvents()
+                else:
+                    self.stop_whatever_you_are_doing_and_cancel_the_animation_right_there = False
+                    completed = True
 
                 if completed:
                     # Emitting end signal

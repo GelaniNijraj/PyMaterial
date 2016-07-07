@@ -6,6 +6,8 @@ from .MCircularReveal import MCircularReveal
 
 from MBase import *
 
+import time
+
 animation_thread = MAnimationThread()
 animation_thread.start()
 
@@ -36,14 +38,6 @@ class MAnimator:
             'duration': duration,
             'animator': MFade()
         }
-
-        # Check if there is any ongoing animation
-        if self.__animations[animation_name] is not None:
-            # then cancel that animation while saving the state
-            self.__animations[animation_name]['animator'].paused = True
-            self.__animations[animation_name]['animator'].canceled = True
-            # Resetting the animation
-            self.__animations[animation_name] = None
         # Now worry about the current animation
         # Building the animation dictionary
         return self
@@ -68,8 +62,8 @@ class MAnimator:
                     print("already exists so canceling")
                     # canceling at the current state if there is an
                     # ongoing animation
-                    self.__animations[animation]['animator'].pause()
-                    self.__animations[animation]['animator'].cancel()
+                    self.__animations[animation]['animator'].stop_whatever_you_are_doing_and_cancel_the_animation_right_there = True
+                print("setting up stuff")
                 # setting up the duration and target)
                 parmas['animator'].target = parmas['target']
                 if parmas['duration'] != 0:

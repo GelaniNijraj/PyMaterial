@@ -1,9 +1,8 @@
 __author__ = "MaitreyaBuddha"
 
 import abc
-from threading import Thread
 
-from PySide.QtCore import Signal, QObject, QPoint
+from PySide.QtCore import Signal, QObject
 
 
 class MAnimate(QObject):
@@ -50,8 +49,11 @@ class MAnimate(QObject):
         # Holds the shapes to which animation should be applied
         self.__shapes = []
 
-        # Framerate of the animation
+        # Frame rate of the animation
         self.__fps = 60
+
+        # TODO: Choose a fucking proper name for the variable
+        self.stop_whatever_you_are_doing_and_cancel_the_animation_right_there = False
 
     def start(self, animation_thread):
         """
